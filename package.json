@@ -1,14 +1,33 @@
 {
-	"activationEvents": [
-		"onLanguage:java",
-		"onDebugInitialConfigurations",
-		"onDebugResolve:java",
-		"onCommand:JavaDebug.SpecifyProgramArgs",
-		"onCommand:JavaDebug.PickJavaProcess"
-	],
-	"aiKey": "67d4461e-ccba-418e-8082-1bd0acfe8516",
-	"capabilities": {
-		"virtualWorkspaces": false
+	"name": "vscode-java-debug",
+	"displayName": "Debugger for Java",
+	"version": "0.0.1",
+	"private": false,
+	"description": "A lightweight Java debugger for Visual Studio Code",
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
+	"main": "./dist/extension",
+	"scripts": {
+		"build": "webpack --config webpack.config.js --mode=\"production\"",
+		"build-server": "node scripts/build/buildJdtlsExt.js",
+		"compile": "tsc -p . && webpack --config webpack.config.js",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"tslint": "tslint -t verbose --project tsconfig.json",
+		"vscode:prepublish": "npm run build",
+		"watch": "webpack --config webpack.config.js --watch"
 	},
 	"contributes": {
 		"breakpoints": [
@@ -949,6 +968,13 @@
 			]
 		}
 	},
+	"activationEvents": [
+		"onLanguage:java",
+		"onDebugInitialConfigurations",
+		"onDebugResolve:java",
+		"onCommand:JavaDebug.SpecifyProgramArgs",
+		"onCommand:JavaDebug.PickJavaProcess"
+	],
 	"dependencies": {
 		"compare-versions": "^4.1.4",
 		"dotenv": "^16.3.1",
@@ -959,7 +985,6 @@
 		"vscode-languageserver-types": "3.16.0",
 		"vscode-tas-client": "^0.1.84"
 	},
-	"description": "A lightweight Java debugger for Visual Studio Code",
 	"devDependencies": {
 		"@types/glob": "^7.2.0",
 		"@types/lodash": "^4.14.195",
@@ -975,21 +1000,15 @@
 		"webpack": "^5.88.2",
 		"webpack-cli": "^4.10.0"
 	},
-	"displayName": "Debugger for Java",
-	"icon": "logo.png",
-	"main": "./dist/extension",
-	"name": "vscode-java-debug",
-	"preview": false,
-	"scripts": {
-		"build": "webpack --config webpack.config.js --mode=\"production\"",
-		"build-server": "node scripts/build/buildJdtlsExt.js",
-		"compile": "tsc -p . && webpack --config webpack.config.js",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"tslint": "tslint -t verbose --project tsconfig.json",
-		"vscode:prepublish": "npm run build",
-		"watch": "webpack --config webpack.config.js --watch"
+	"publishConfig": {
+		"access": "public"
 	},
-	"type": "module",
+	"icon": "logo.png",
+	"preview": false,
+	"aiKey": "67d4461e-ccba-418e-8082-1bd0acfe8516",
+	"capabilities": {
+		"virtualWorkspaces": false
+	},
 	"workspaceTrust": {
 		"description": "Extension may require your trust on workspace for code execution.",
 		"request": "onDemand"
