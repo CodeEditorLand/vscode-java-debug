@@ -4,30 +4,31 @@
 	"version": "0.0.1",
 	"private": false,
 	"description": "A lightweight Java debugger for Visual Studio Code",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandJavaDebug#readme",
 	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandJavaDebug/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandJavaDebug.git"
 	},
 	"license": "SEE LICENSE IN LICENSE",
 	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
 	},
 	"type": "module",
 	"main": "./dist/extension",
 	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
 		"build": "webpack --config webpack.config.js --mode=\"production\"",
 		"build-server": "node scripts/build/buildJdtlsExt.js",
 		"compile": "tsc -p . && webpack --config webpack.config.js",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"tslint": "tslint -t verbose --project tsconfig.json",
-		"vscode:prepublish": "npm run build",
-		"watch": "webpack --config webpack.config.js --watch"
+		"prepublishOnly": "Build 'Source/**/*.ts'"
 	},
 	"contributes": {
 		"breakpoints": [
@@ -747,7 +748,7 @@
 			}
 		],
 		"javaExtensions": [
-			"./server/com.microsoft.java.debug.plugin-0.51.1.jar"
+			"./server/com.microsoft.java.debug.plugin-0.52.0.jar"
 		],
 		"menus": {
 			"commandPalette": [
@@ -976,29 +977,19 @@
 		"onCommand:JavaDebug.PickJavaProcess"
 	],
 	"dependencies": {
-		"compare-versions": "^4.1.4",
-		"dotenv": "^16.3.1",
-		"lodash": "^4.17.21",
-		"uuid": "^8.3.2",
-		"vscode-extension-telemetry-wrapper": "^0.13.3",
-		"vscode-languageclient": "6.0.0-next.9",
-		"vscode-languageserver-types": "3.16.0",
-		"vscode-tas-client": "^0.1.84"
+		"compare-versions": "6.1.0",
+		"dotenv": "16.4.5",
+		"lodash": "4.17.21",
+		"uuid": "9.0.1"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/lodash": "^4.14.195",
-		"@types/mocha": "^10.0.1",
-		"@types/node": "^14.18.53",
-		"@types/uuid": "^8.3.4",
-		"@types/vscode": "1.75.0",
-		"@vscode/test-electron": "^2.3.8",
-		"mocha": "^10.2.0",
-		"ts-loader": "^9.4.4",
-		"typescript": "^4.9.5",
-		"typescript-esbuild": "0.4.5",
-		"webpack": "^5.88.2",
-		"webpack-cli": "^4.10.0"
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6",
+		"@types/glob": "8.1.0",
+		"@types/lodash": "4.17.0",
+		"@types/node": "20.12.7",
+		"@types/uuid": "9.0.8",
+		"ts-loader": "9.5.1"
 	},
 	"publishConfig": {
 		"access": "public"
