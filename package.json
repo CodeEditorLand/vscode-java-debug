@@ -955,17 +955,17 @@
 		"onCommand:JavaDebug.PickJavaProcess"
 	],
 	"dependencies": {
-		"compare-versions": "4.1.4",
-		"dotenv": "16.3.1",
+		"compare-versions": "6.1.0",
+		"dotenv": "16.4.5",
 		"lodash": "4.17.21",
-		"uuid": "8.3.2"
+		"uuid": "10.0.0"
 	},
 	"devDependencies": {
-		"@types/glob": "7.2.0",
-		"@types/lodash": "4.14.195",
-		"@types/node": "14.18.53",
-		"@types/uuid": "8.3.4",
-		"ts-loader": "9.4.4"
+		"@types/glob": "8.1.0",
+		"@types/lodash": "4.17.6",
+		"@types/node": "20.14.9",
+		"@types/uuid": "10.0.0",
+		"ts-loader": "9.5.1"
 	},
 	"icon": "logo.png",
 	"preview": false,
