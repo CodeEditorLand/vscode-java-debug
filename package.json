@@ -1,14 +1,12 @@
 {
-	"activationEvents": [
-		"onLanguage:java",
-		"onDebugInitialConfigurations",
-		"onDebugResolve:java",
-		"onCommand:JavaDebug.SpecifyProgramArgs",
-		"onCommand:JavaDebug.PickJavaProcess"
-	],
-	"aiKey": "67d4461e-ccba-418e-8082-1bd0acfe8516",
-	"capabilities": {
-		"virtualWorkspaces": false
+	"name": "vscode-java-debug",
+	"displayName": "Debugger for Java",
+	"description": "A lightweight Java debugger for Visual Studio Code",
+	"main": "./dist/extension",
+	"scripts": {
+		"build": "webpack --config webpack.config.js --mode=\"production\"",
+		"build-server": "node scripts/build/buildJdtlsExt.js",
+		"compile": "tsc -p . && webpack --config webpack.config.js"
 	},
 	"contributes": {
 		"breakpoints": [
@@ -949,29 +947,31 @@
 			]
 		}
 	},
+	"activationEvents": [
+		"onLanguage:java",
+		"onDebugInitialConfigurations",
+		"onDebugResolve:java",
+		"onCommand:JavaDebug.SpecifyProgramArgs",
+		"onCommand:JavaDebug.PickJavaProcess"
+	],
 	"dependencies": {
-		"compare-versions": "^4.1.4",
-		"dotenv": "^16.3.1",
-		"lodash": "^4.17.21",
-		"uuid": "^8.3.2"
+		"compare-versions": "6.1.1",
+		"dotenv": "16.4.5",
+		"lodash": "4.17.21",
+		"uuid": "10.0.0"
 	},
-	"description": "A lightweight Java debugger for Visual Studio Code",
 	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/lodash": "^4.14.195",
-		"@types/node": "^14.18.53",
-		"@types/uuid": "^8.3.4",
-		"ts-loader": "^9.4.4"
+		"@types/glob": "8.1.0",
+		"@types/lodash": "4.17.7",
+		"@types/node": "22.4.0",
+		"@types/uuid": "10.0.0",
+		"ts-loader": "9.5.1"
 	},
-	"displayName": "Debugger for Java",
 	"icon": "logo.png",
-	"main": "./dist/extension",
-	"name": "vscode-java-debug",
 	"preview": false,
-	"scripts": {
-		"build": "webpack --config webpack.config.js --mode=\"production\"",
-		"build-server": "node scripts/build/buildJdtlsExt.js",
-		"compile": "tsc -p . && webpack --config webpack.config.js"
+	"aiKey": "67d4461e-ccba-418e-8082-1bd0acfe8516",
+	"capabilities": {
+		"virtualWorkspaces": false
 	},
 	"workspaceTrust": {
 		"description": "Extension may require your trust on workspace for code execution.",
