@@ -961,7 +961,7 @@
 	"description": "A lightweight Java debugger for Visual Studio Code",
 	"devDependencies": {
 		"@types/glob": "8.1.0",
-		"@types/lodash": "4.17.9",
+		"@types/lodash": "4.17.10",
 		"@types/node": "22.7.4",
 		"@types/uuid": "10.0.0",
 		"ts-loader": "9.5.1"
