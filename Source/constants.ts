@@ -7,7 +7,7 @@ export const HCR_EVENT = "hotcodereplace";
 export const USER_NOTIFICATION_EVENT = "usernotification";
 
 export enum ClasspathVariable {
-    Auto = "$Auto",
-    Runtime = "$Runtime",
-    Test = "$Test",
+	Auto = "$Auto",
+	Runtime = "$Runtime",
+	Test = "$Test",
 }
