@@ -3,12 +3,12 @@
 This document provides the information needed to troubleshoot common errors of
 Debugger for Java (the debugger). If it does not cover the problem you are
 seeing, please
-[log an issue](https://github.com/Microsoft/vscode-java-debug/issues) instead.
+[`log an issue`](https://github.com/Microsoft/vscode-java-debug/issues) instead.
 
 ## Java Language Support extension fails to start.
 
 The debugger works with
-[Language Support for Java(TM) by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+[`Language Support for Java(TM) by Red Hat`](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 (the language server) for source mapping and project support. If the language
 server fails to start, the debugger will not work as expected. Here is a simple
 way to check whether the language server is started. Open a .java or a Java
@@ -16,7 +16,7 @@ project folder in VS Code, and then check the icon at the right side of the
 status bar. You should see the 👍 icon if the language server is loaded
 correctly.
 
-![status indicator](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/statusMarker.png).
+![`status indicator`](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/statusMarker.png).
 
 ### Try:
 
@@ -30,7 +30,7 @@ correctly.
 3. Run VS Code command _"Java: Clean the Java language server workspace"_ to
    clean the stale workspace cache.
 4. Try more
-   [troubleshooting guide](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting)
+   [`troubleshooting guide`](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting)
    from the language server product site.
 
 ## Build failed, do you want to continue?
@@ -47,7 +47,7 @@ error.
 2. Run VS Code command _"Java: Open Java language server log file"_, search
    keyword `build/building workspace` to find more details for the build errors.
 3. If still cannot find out what errors, then reference the
-   [language server troubleshooting](#try) paragraph to [2]update project
+   [`language server troubleshooting`](#try) paragraph to [2]update project
    configuration, and [3]clean workspace cache.
 
 ## x.java isn't on the classpath. Only syntax errors will be reported
@@ -88,7 +88,7 @@ your Java file is not on the classpath.
    workspace.
 5. If the problem persists, it's probably because the language server doesn't
    load your project correctly. Please reference the
-   [language server troubleshooting](#try) paragraph for more troubleshooting
+   [`language server troubleshooting`](#try) paragraph for more troubleshooting
    info.
 
 ## Program throws ClassNotFoundException
@@ -110,14 +110,14 @@ are not found in the entire classpaths.
    server to rebuild the current project.
 4. If the problem persists, it's probably because the language server doesn't
    load your project correctly. Please reference the
-   [language server troubleshooting](#try) paragraph for more troubleshooting
+   [`language server troubleshooting`](#try) paragraph for more troubleshooting
    info.
 
 ## Program throws UnsupportedClassVersionError
 
 Below is a typical error message.
 
-![image](https://user-images.githubusercontent.com/14052197/78854443-ed47c780-7a53-11ea-8317-d8b097dfba99.png)
+![`image`](https://user-images.githubusercontent.com/14052197/78854443-ed47c780-7a53-11ea-8317-d8b097dfba99.png)
 
 ### Reason:
 
@@ -130,19 +130,19 @@ feature. Similarly `58.65535` stands for Java 14 preview.
 The error says the compiled class is `57.65535`, but the runtime JDK only
 recognizes class file version `58.65535`. That's because the preview feature is
 not backward compatible, i.e. JVM 14 doesn't support 13 preview feature. The
-[openjdk](https://openjdk.java.net/jeps/12) website has claimed the reason that
+[`openjdk`](https://openjdk.java.net/jeps/12) website has claimed the reason that
 it would be costly for JDK 14 to support preview features from JDK 13 which were
 changed or dropped in response to feedback.
 
 One possible root cause for this error is your runtime JDK is the latest JDK but
 the upstream
-[Language Support for Java](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+[`Language Support for Java`](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 extension doesn't catch up the support yet.
 
 ### Try:
 
 1. Try to update
-   [Language Support for Java](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+   [`Language Support for Java`](https://marketplace.visualstudio.com/items?itemName=redhat.java)
    to the latest, and then try step 3 to rebuild the workspace.
 2. If it doesn't work, then try to install an older JDK version, set its
    installation folder to "java.home" user setting in _.vscode/settings.json_
@@ -163,7 +163,7 @@ that indicates the new changes cannot be hot replaced by JVM.
 ### Try:
 
 1. Check the HCR limitation from the
-   [wiki](https://github.com/microsoft/vscode-java-debug/wiki/Hot-Code-Replace).
+   [`wiki`](https://github.com/microsoft/vscode-java-debug/wiki/Hot-Code-Replace).
 2. Restart your application to apply the new changes. Or ignore the message, and
    continue to debug.
 3. You can disable the hot code replace feature by changing the user setting
@@ -220,7 +220,7 @@ debugger doesn't find any main class in the whole workspace.
 1. Check at least one main class exists in your workspace.
 2. If no main class exists, please create a main class first. Otherwise, it's
    probably because the language server fails to start. Please reference the
-   [language server troubleshooting](#try) paragraph for more troubleshooting
+   [`language server troubleshooting`](#try) paragraph for more troubleshooting
    info.
 
 ## No delegateCommandHandler for vscode.java.startDebugSession when starting Debugger
@@ -234,7 +234,7 @@ debugger to not be configured correctly.
 
 1. Restart VS Code and the issue should disappear
 2. If it continues to error try restart again, and if still a problem open an
-   issue at [vscode-java-debug](https://github.com/Microsoft/vscode-java-debug)
+   issue at [`vscode-java-debug`](https://github.com/Microsoft/vscode-java-debug)
 
 ## Failed to resolve classpath:
 
@@ -277,7 +277,7 @@ The value specified in `request` option of _launch.json_ is incorrect.
 ### Try:
 
 1. Reference the VS Code official document
-   [launch configurations](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
+   [`launch configurations`](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
    about how to configure _launch.json_.
 2. Try to use the debugger to regenerate the debug configurations in
    _launch.json_. Remove the existing _launch.json_ file and press F5. The
