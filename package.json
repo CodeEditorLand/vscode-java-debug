@@ -956,13 +956,13 @@
 		"compare-versions": "6.1.1",
 		"dotenv": "16.4.5",
 		"lodash": "4.17.21",
-		"uuid": "10.0.0"
+		"uuid": "11.0.1"
 	},
 	"description": "A lightweight Java debugger for Visual Studio Code",
 	"devDependencies": {
 		"@types/glob": "8.1.0",
 		"@types/lodash": "4.17.12",
-		"@types/node": "22.7.9",
+		"@types/node": "22.8.1",
 		"@types/uuid": "10.0.0",
 		"ts-loader": "9.5.1"
 	},
