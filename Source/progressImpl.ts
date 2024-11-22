@@ -42,7 +42,9 @@ class ProgressReporter implements IProgressReporter {
 		this._progressLocation =
 			progressLocation || ProgressLocation.Notification;
 		this._cancellable = cancellable;
+
 		const config = workspace.getConfiguration("java");
+
 		if (
 			config.silentNotification &&
 			this._progressLocation === ProgressLocation.Notification
@@ -103,6 +105,7 @@ class ProgressReporter implements IProgressReporter {
 	public show(): void {
 		if (this._statusBarItem) {
 			this._statusBarItem.show();
+
 			return;
 		}
 
@@ -167,6 +170,7 @@ class ProgressReporter implements IProgressReporter {
 						increment: this._increment,
 					});
 				});
+
 				return new Promise((resolve) => {
 					this._cancelProgressEventEmitter.event(() => {
 						resolve(true);
@@ -191,6 +195,7 @@ class ProgressProvider implements IProgressProvider {
 			cancellable === undefined ? true : !!cancellable,
 		);
 		this.store[progressReporter.getId()] = progressReporter;
+
 		return progressReporter;
 	}
 

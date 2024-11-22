@@ -34,6 +34,7 @@ export async function getShortenApproachForCLI(
 		runtimeVersion <= 8
 			? shortenApproach.jarmanifest
 			: shortenApproach.argfile;
+
 	return (await shouldShortenIfNecessary(config))
 		? recommendedShortenApproach
 		: shortenApproach.none;
@@ -46,10 +47,12 @@ export async function getShortenApproachForCLI(
 export async function validateRuntimeCompatibility(runtimeVersion: number) {
 	try {
 		const platformSettings = await fetchPlatformSettings();
+
 		if (platformSettings && platformSettings.latestSupportedJavaVersion) {
 			const latestSupportedVersion = flattenMajorVersion(
 				platformSettings.latestSupportedJavaVersion,
 			);
+
 			if (latestSupportedVersion < runtimeVersion) {
 				showWarningMessageWithTroubleshooting({
 					message:
@@ -96,9 +99,11 @@ export async function addMoreHelpfulVMArgs(
  */
 export async function getJavaVersion(javaExec: string): Promise<number> {
 	javaExec = javaExec || path.join(await getJavaHome(), "bin", "java");
+
 	let javaVersion = await checkVersionInReleaseFile(
 		path.resolve(javaExec, "..", ".."),
 	);
+
 	if (!javaVersion) {
 		javaVersion = await checkVersionByCLI(javaExec);
 	}
@@ -110,18 +115,23 @@ async function checkVersionInReleaseFile(javaHome: string): Promise<number> {
 		return 0;
 	}
 	const releaseFile = path.join(javaHome, "release");
+
 	if (!(await fs.existsSync(releaseFile))) {
 		return 0;
 	}
 
 	try {
 		const content = fs.readFileSync(releaseFile);
+
 		const regexp = /^JAVA_VERSION="(.*)"/gm;
+
 		const match = regexp.exec(content.toString());
+
 		if (!match) {
 			return 0;
 		}
 		const majorVersion = flattenMajorVersion(match[1]);
+
 		return majorVersion;
 	} catch (error) {
 		// ignore
@@ -140,7 +150,9 @@ async function checkVersionByCLI(javaExec: string): Promise<number> {
 	return new Promise((resolve) => {
 		cp.execFile(javaExec, ["-version"], {}, (_error, _stdout, stderr) => {
 			const regexp = /version "(.*)"/g;
+
 			const match = regexp.exec(stderr);
+
 			if (!match) {
 				return resolve(0);
 			}
@@ -158,8 +170,11 @@ function flattenMajorVersion(version: string): number {
 
 	// look into the interesting bits now
 	const regexp = /\d+/g;
+
 	const match = regexp.exec(version);
+
 	let javaVersion = 0;
+
 	if (match) {
 		javaVersion = parseInt(match[0], 10);
 	}
@@ -171,10 +186,15 @@ async function shouldShortenIfNecessary(
 	config: vscode.DebugConfiguration,
 ): Promise<boolean> {
 	const cliLength = await inferLaunchCommandLength(config);
+
 	const classPaths = config.classPaths || [];
+
 	const modulePaths = config.modulePaths || [];
+
 	const classPathLength = classPaths.join(path.delimiter).length;
+
 	const modulePathLength = modulePaths.join(path.delimiter).length;
+
 	if (!config.console || config.console === "internalConsole") {
 		return (
 			cliLength >= getMaxProcessCommandLineLength(config) ||
@@ -190,7 +210,9 @@ function getMaxProcessCommandLineLength(
 	config: vscode.DebugConfiguration,
 ): number {
 	const ARG_MAX_WINDOWS = 32768;
+
 	const ARG_MAX_MACOS = 262144;
+
 	const ARG_MAX_LINUX = 2097152;
 	// for Posix systems, ARG_MAX is the maximum length of argument to the exec functions including environment data.
 	// POSIX suggests to subtract 2048 additionally so that the process may safely modify its environment.
@@ -210,6 +232,7 @@ function getMaxProcessCommandLineLength(
 
 function getEnvironmentLength(config: vscode.DebugConfiguration): number {
 	const env = config.env || {};
+
 	return _.isEmpty(env)
 		? 0
 		: Object.keys(env)
@@ -223,6 +246,7 @@ function strlen(str: string): number {
 
 function getMaxArgLength(): number {
 	const MAX_ARG_STRLEN_LINUX = 131072;
+
 	if (process.platform === "linux") {
 		// On Linux, MAX_ARG_STRLEN (kernel >= 2.6.23) is the maximum length of a command line argument (or environment variable). Its value
 		// cannot be changed without recompiling the kernel.

@@ -19,8 +19,10 @@ export class NotificationBar implements vscode.Disposable {
 	public show(text: string, duration?: number) {
 		this.statusBar.text = text;
 		this.statusBar.show();
+
 		const updateTime = Date.now();
 		this.lastUpdateTime = updateTime;
+
 		if (duration) {
 			setTimeout(() => {
 				if (this.lastUpdateTime === updateTime) {

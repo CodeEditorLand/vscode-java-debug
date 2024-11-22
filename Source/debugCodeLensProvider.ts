@@ -20,8 +20,11 @@ import { IProgressReporter } from "./progressAPI";
 import { getJavaExtensionAPI, isJavaExtEnabled, ServerMode } from "./utility";
 
 const JAVA_RUN_CODELENS_COMMAND = "java.debug.runCodeLens";
+
 const JAVA_DEBUG_CODELENS_COMMAND = "java.debug.debugCodeLens";
+
 const JAVA_DEBUG_CONFIGURATION = "java.debug.settings";
+
 const ENABLE_CODE_LENS_VARIABLE = "enableRunDebugCodeLens";
 
 export function initializeCodeLensProvider(
@@ -82,6 +85,7 @@ class DebugCodeLensContainer implements vscode.Disposable {
 		const configuration = vscode.workspace.getConfiguration(
 			JAVA_DEBUG_CONFIGURATION,
 		);
+
 		const isCodeLensEnabled = configuration.get<boolean>(
 			ENABLE_CODE_LENS_VARIABLE,
 		);
@@ -101,9 +105,11 @@ class DebugCodeLensContainer implements vscode.Disposable {
 					const newConfiguration = vscode.workspace.getConfiguration(
 						JAVA_DEBUG_CONFIGURATION,
 					);
+
 					const newEnabled = newConfiguration.get<boolean>(
 						ENABLE_CODE_LENS_VARIABLE,
 					);
+
 					if (newEnabled && this.lensProvider === undefined) {
 						this.lensProvider =
 							vscode.languages.registerCodeLensProvider(
@@ -150,6 +156,7 @@ class DebugCodeLensProvider implements vscode.CodeLensProvider {
 				document.uri,
 				token,
 			);
+
 			return _.flatten(
 				mainMethods.map((method) => {
 					return [
@@ -206,6 +213,7 @@ async function constructDebugConfig(
 ): Promise<vscode.DebugConfiguration> {
 	const launchConfigurations: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("launch", workspace);
+
 	const rawConfigs: vscode.DebugConfiguration[] =
 		launchConfigurations.configurations;
 
@@ -270,6 +278,7 @@ async function launchJsonExists(workspace?: vscode.Uri): Promise<boolean> {
 		".vscode/launch.json",
 		"**/node_modules/**",
 	);
+
 	return !!results.find(
 		(launchJson) =>
 			vscode.workspace.getWorkspaceFolder(launchJson) === workspaceFolder,
@@ -285,10 +294,13 @@ export async function startDebugging(
 ): Promise<boolean> {
 	const workspaceFolder: vscode.WorkspaceFolder | undefined =
 		vscode.workspace.getWorkspaceFolder(uri);
+
 	const workspaceUri: vscode.Uri | undefined = workspaceFolder
 		? workspaceFolder.uri
 		: undefined;
+
 	const onClasspath = await isOnClasspath(uri.toString());
+
 	if (workspaceUri && onClasspath === false && !(await addToClasspath(uri))) {
 		return false;
 	}
@@ -308,23 +320,29 @@ export async function startDebugging(
 
 async function addToClasspath(uri: vscode.Uri): Promise<boolean> {
 	const fileName = path.basename(uri.fsPath || "");
+
 	const parentFsPath = path.dirname(uri.fsPath || "");
+
 	if (!parentFsPath) {
 		return true;
 	}
 
 	const parentUri = vscode.Uri.file(parentFsPath);
+
 	let parentPath = vscode.workspace.asRelativePath(parentUri, true);
+
 	if (parentPath === parentUri.fsPath) {
 		parentPath = path.basename(parentFsPath);
 	}
 	sendInfo("", { operationName: "notOnClasspath" });
+
 	const ans = await vscode.window.showWarningMessage(
 		`The file ${fileName} isn't on the classpath, the runtime may throw class not found error. ` +
 			`Do you want to add the parent folder "${parentPath}" to Java source path?`,
 		"Add to Source Path",
 		"Skip",
 	);
+
 	if (ans === "Skip") {
 		return true;
 	} else if (ans === "Add to Source Path") {

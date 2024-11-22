@@ -34,6 +34,7 @@ export async function substituteFilterVariables(
 			const hasReservedName = skipClasses.some(
 				(filter) => filter === "$JDK" || filter === "$Libraries",
 			);
+
 			return hasReservedName
 				? await resolveClassFilters(skipClasses)
 				: skipClasses;

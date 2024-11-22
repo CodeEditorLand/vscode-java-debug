@@ -15,7 +15,9 @@ import { IProgressReporter } from "./progressAPI";
 import * as utility from "./utility";
 
 const JAVA_DEBUG_CONFIGURATION = "java.debug.settings";
+
 const ON_BUILD_FAILURE_PROCEED = "onBuildFailureProceed";
+
 const CANCELLED_CODE = -32800;
 
 enum CompileWorkspaceStatus {
@@ -38,10 +40,12 @@ export async function buildWorkspace(
 	progressReporter: IProgressReporter,
 ): Promise<boolean> {
 	const startAt = new Date().getTime();
+
 	const buildResult = await instrumentOperation(
 		"build",
 		async (operationId: string) => {
 			let status;
+
 			try {
 				status = await commands.executeJavaLanguageServerCommand(
 					commands.JAVA_BUILD_WORKSPACE,
@@ -71,6 +75,7 @@ export async function buildWorkspace(
 		return true;
 	} else {
 		const elapsed = new Date().getTime() - startAt;
+
 		const humanVisibleDelay = elapsed < 150 ? 150 : 0;
 		await new Promise((resolve) => {
 			setTimeout(() => {
@@ -78,6 +83,7 @@ export async function buildWorkspace(
 				resolve(null);
 			}, humanVisibleDelay);
 		});
+
 		return handleBuildFailure(
 			buildResult.operationId,
 			buildResult.status,
@@ -94,21 +100,26 @@ async function handleBuildFailure(
 	const configuration = vscode.workspace.getConfiguration(
 		JAVA_DEBUG_CONFIGURATION,
 	);
+
 	const onBuildFailureProceed = configuration.get<boolean>(
 		ON_BUILD_FAILURE_PROCEED,
 	);
 
 	if (err instanceof utility.JavaExtensionNotEnabledError) {
 		utility.guideToInstallJavaExtension();
+
 		return false;
 	}
 
 	const error: Error = new utility.UserError({
 		message: "Build failed",
 	});
+
 	setErrorCode(error, Number(err));
 	sendOperationError(operationId, "build", error);
+
 	const errorDiagnostics = traceErrorTypes(operationId);
+
 	if (!onBuildFailureProceed && err) {
 		// build failure information is not displayed in PROBLEMS panel for build server project.
 		if (
@@ -119,6 +130,7 @@ async function handleBuildFailure(
 		}
 
 		progressReporter.hide(true);
+
 		const ans = await vscode.window.showErrorMessage(
 			"Build failed, do you want to continue?",
 			"Continue",
@@ -129,12 +141,14 @@ async function handleBuildFailure(
 			operationName: "build",
 			choiceForBuildError: ans || "esc",
 		});
+
 		if (ans === "Continue") {
 			return true;
 		} else if (ans === "Always Continue") {
 			const debugSettings: vscode.WorkspaceConfiguration =
 				vscode.workspace.getConfiguration("java.debug.settings");
 			debugSettings?.update("onBuildFailureProceed", true);
+
 			return true;
 		} else if (ans === "Fix...") {
 			showFixSuggestions(operationId);
@@ -148,8 +162,11 @@ async function handleBuildFailure(
 
 function traceErrorTypes(operationId: string): boolean {
 	const problems = vscode.languages.getDiagnostics() || [];
+
 	const errorTypes: { [key: string]: number } = {};
+
 	let errorCount = 0;
+
 	for (const problem of problems) {
 		for (const diagnostic of problem[1]) {
 			if (
@@ -178,6 +195,7 @@ function traceErrorTypes(operationId: string): boolean {
 
 async function showFixSuggestions(operationId: string) {
 	let buildFiles: string[] = [];
+
 	try {
 		buildFiles = await lsPlugin.resolveBuildFiles();
 	} catch (error) {
@@ -189,6 +207,7 @@ async function showFixSuggestions(operationId: string) {
 		label: "Clean workspace cache",
 		detail: "Clean the stale workspace and reload the window",
 	});
+
 	if (buildFiles.length) {
 		pickitems.push({
 			label: "Update project configuration",
@@ -212,6 +231,7 @@ async function showFixSuggestions(operationId: string) {
 		operationName: "build",
 		choiceForBuildFix: ans ? ans.label : "esc",
 	});
+
 	if (!ans) {
 		return;
 	}

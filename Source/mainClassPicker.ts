@@ -40,7 +40,9 @@ class MainClassPicker {
 		parameter4?: boolean,
 	): Promise<IMainClassOption | undefined> {
 		let labelFormatter: Formatter = defaultLabelFormatter;
+
 		let autoPick: boolean = true;
+
 		if (typeof parameter3 === "function") {
 			labelFormatter = parameter3;
 		} else if (typeof parameter3 === "boolean") {
@@ -70,6 +72,7 @@ class MainClassPicker {
 		});
 
 		const selected = await window.showQuickPick(pickItems, { placeHolder });
+
 		if (selected) {
 			return selected.data;
 		}
@@ -102,7 +105,9 @@ class MainClassPicker {
 	): Promise<IMainClassOption | undefined> {
 		// Record the main class picking history in a most recently used cache.
 		let labelFormatter: Formatter = defaultLabelFormatter;
+
 		let autoPick: boolean = true;
+
 		if (typeof parameter3 === "function") {
 			labelFormatter = parameter3;
 		} else if (typeof parameter3 === "boolean") {
@@ -127,6 +132,7 @@ class MainClassPicker {
 			options.length && this.contains(options[0])
 				? options[0]
 				: undefined;
+
 		const isMostRecentlyUsed = (option: IMainClassOption): boolean => {
 			return (
 				!!mostRecentlyUsedOption &&
@@ -134,18 +140,22 @@ class MainClassPicker {
 				mostRecentlyUsedOption.projectName === option.projectName
 			);
 		};
+
 		const isFromActiveEditor = (option: IMainClassOption): boolean => {
 			const activeEditor: TextEditor | undefined =
 				window.activeTextEditor;
+
 			const currentActiveFile: string | undefined = _.get(
 				activeEditor,
 				"document.uri.fsPath",
 			);
+
 			if (option.filePath && currentActiveFile) {
 				return path.relative(option.filePath, currentActiveFile) === "";
 			}
 			return false;
 		};
+
 		const isPrivileged = (option: IMainClassOption): boolean => {
 			return isMostRecentlyUsed(option) || isFromActiveEditor(option);
 		};
@@ -167,6 +177,7 @@ class MainClassPicker {
 
 		const pickItems = adjustedOptions.map((option) => {
 			const adjustedDetail = [];
+
 			if (isMostRecentlyUsed(option)) {
 				adjustedDetail.push("$(clock) recently used");
 			}
@@ -196,8 +207,10 @@ class MainClassPicker {
 		});
 
 		const selected = await window.showQuickPick(pickItems, { placeHolder });
+
 		if (selected) {
 			this.updateMRUTimestamp(selected.data);
+
 			return selected.data;
 		}
 		return undefined;
@@ -211,6 +224,7 @@ class MainClassPicker {
 	public isAutoPicked(options: IMainClassOption[], autoPick?: boolean) {
 		const shouldAutoPick: boolean =
 			autoPick === undefined ? true : !!autoPick;
+
 		if (!options || !options.length) {
 			return true;
 		} else if (shouldAutoPick && options.length === 1) {

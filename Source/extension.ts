@@ -58,6 +58,7 @@ import { registerVariableMenuCommands } from "./variableMenu";
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	await initializeFromJsonFile(context.asAbsolutePath("./package.json"));
 	await initExpService(context);
+
 	return instrumentOperation("activation", initializeExtension)(context);
 }
 
@@ -97,6 +98,7 @@ function initializeExtension(
 			"JavaDebug.PickJavaProcess",
 			async () => {
 				let javaProcess;
+
 				try {
 					javaProcess = await pickJavaProcess();
 				} catch (error) {
@@ -112,6 +114,7 @@ function initializeExtension(
 			},
 		),
 	);
+
 	const hcrStatusBar: NotificationBar = new NotificationBar(
 		"java.hcrStatusBar",
 		"Java HotCodeReplace",
@@ -168,6 +171,7 @@ function initializeExtension(
 			new JavaInlineValuesProvider(),
 		),
 	);
+
 	return {
 		progressProvider,
 	};
@@ -181,6 +185,7 @@ export async function deactivate() {
 const delay = promisify(setTimeout);
 async function subscribeToJavaExtensionEvents(): Promise<void> {
 	const javaExt = vscode.extensions.getExtension("redhat.java");
+
 	if (!javaExt) {
 		return;
 	}
@@ -188,6 +193,7 @@ async function subscribeToJavaExtensionEvents(): Promise<void> {
 	// wait javaExt to activate
 	const timeout = 30 * 60 * 1000; // wait 30 min at most
 	let count = 0;
+
 	while (!javaExt.isActive && count < timeout) {
 		await delay(1000);
 		count += 1000;
@@ -197,6 +203,7 @@ async function subscribeToJavaExtensionEvents(): Promise<void> {
 		javaExt.exports?.onDidSourceInvalidate?.((event: any) => {
 			if (event?.affectedRootPaths?.length) {
 				const activeDebugSession = vscode.debug.activeDebugSession;
+
 				if (activeDebugSession?.type === "java") {
 					activeDebugSession.customRequest("refreshFrames", {
 						affectedRootPaths: event.affectedRootPaths,
@@ -218,7 +225,9 @@ function registerDebugEventListener(context: vscode.ExtensionContext) {
 				if (Array.isArray(ret) && ret.length) {
 					ret.forEach((entry) => {
 						const commonProperties: any = {};
+
 						const measureProperties: any = {};
+
 						for (const key of Object.keys(entry)) {
 							if (measureKeys.indexOf(key) >= 0) {
 								measureProperties[key] = entry[key];
@@ -242,6 +251,7 @@ function registerDebugEventListener(context: vscode.ExtensionContext) {
 			const t = customEvent.session
 				? customEvent.session.type
 				: undefined;
+
 			if (t !== JAVA_LANGID) {
 				return;
 			}
@@ -290,6 +300,7 @@ function specifyProgramArguments(
 	};
 
 	const prevArgs = context.workspaceState.get(javaDebugProgramArgsKey, "");
+
 	if (prevArgs.length > 0) {
 		options.value = prevArgs;
 	}
@@ -307,6 +318,7 @@ function specifyProgramArguments(
 async function applyHCR(hcrStatusBar: NotificationBar) {
 	const debugSession: vscode.DebugSession | undefined =
 		vscode.debug.activeDebugSession;
+
 	if (!debugSession) {
 		return;
 	}
@@ -332,6 +344,7 @@ async function applyHCR(hcrStatusBar: NotificationBar) {
 
 	const autobuildConfig: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("java.autobuild");
+
 	if (!autobuildConfig.enabled) {
 		// If autobuild is disabled, force an incremental build before HCR.
 		try {
@@ -348,10 +361,15 @@ async function applyHCR(hcrStatusBar: NotificationBar) {
 	}
 
 	hcrStatusBar.show("$(sync~spin)Applying code changes...");
+
 	const start = new Date().getTime();
+
 	const response = await debugSession.customRequest("redefineClasses");
+
 	const elapsed = new Date().getTime() - start;
+
 	const humanVisibleDelay = elapsed < 150 ? 150 : 0;
+
 	if (humanVisibleDelay) {
 		await new Promise((resolve) => {
 			setTimeout(resolve, humanVisibleDelay);
@@ -361,6 +379,7 @@ async function applyHCR(hcrStatusBar: NotificationBar) {
 	if (response && response.errorMessage) {
 		// The detailed error message is handled by hotCodeReplace#handleHotCodeReplaceCustomEvent
 		hcrStatusBar.clear();
+
 		return;
 	}
 
@@ -373,6 +392,7 @@ async function applyHCR(hcrStatusBar: NotificationBar) {
 		vscode.window.showWarningMessage(
 			"Cannot find any changed classes for hot replace!",
 		);
+
 		return;
 	}
 
@@ -388,16 +408,19 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 	const progressReporter = progressProvider.createProgressReporter(
 		noDebug ? "Run" : "Debug",
 	);
+
 	try {
 		// Wait for Java Language Support extension being on Standard mode.
 		const isOnStandardMode =
 			await utility.waitForStandardMode(progressReporter);
+
 		if (!isOnStandardMode) {
 			throw new utility.OperationCancelledError("");
 		}
 
 		const activeEditor: vscode.TextEditor | undefined =
 			vscode.window.activeTextEditor;
+
 		if (
 			!uri &&
 			activeEditor &&
@@ -410,12 +433,16 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 			vscode.window.showErrorMessage(
 				`${noDebug ? "Run" : "Debug"} failed. Please open a Java file with main method first.`,
 			);
+
 			throw new utility.OperationCancelledError("");
 		}
 
 		const mainMethods: IMainMethod[] = await resolveMainMethod(uri);
+
 		const hasMainMethods: boolean = mainMethods.length > 0;
+
 		const canRunTests: boolean = await canDelegateToJavaTestRunner(uri);
+
 		const defaultPlaceHolder: string = "Select the main class to run";
 
 		if (!hasMainMethods && !canRunTests) {
@@ -433,8 +460,10 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 				);
 			} else {
 				progressReporter.report("Resolving main class...");
+
 				const mainClasses: IMainClassOption[] =
 					await utility.searchMainMethods();
+
 				if (progressReporter.isCancelled()) {
 					throw new utility.OperationCancelledError("");
 				}
@@ -461,7 +490,9 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 			launchTesting(uri, noDebug, progressReporter);
 		} else {
 			const launchMainChoice: string = "main() method";
+
 			const launchTestChoice: string = "unit tests";
+
 			const choice: string | undefined =
 				await vscode.window.showQuickPick(
 					[launchMainChoice, launchTestChoice],
@@ -470,6 +501,7 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 							"Please select which kind of task you would like to launch",
 					},
 				);
+
 			if (choice === launchMainChoice) {
 				await launchMain(
 					mainMethods,
@@ -484,12 +516,14 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 		}
 	} catch (ex) {
 		progressReporter.done();
+
 		if (ex instanceof utility.OperationCancelledError) {
 			return;
 		}
 
 		if (ex instanceof utility.JavaExtensionNotEnabledError) {
 			utility.guideToInstallJavaExtension();
+
 			return;
 		}
 
@@ -499,8 +533,10 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 
 async function canDelegateToJavaTestRunner(uri: vscode.Uri): Promise<boolean> {
 	const fsPath: string = uri.fsPath;
+
 	const isTestFile: boolean =
 		/.*[\/\\]src[\/\\]test[\/\\]java[\/\\].*[Tt]ests?\.java/.test(fsPath);
+
 	if (!isTestFile) {
 		return false;
 	}
@@ -518,6 +554,7 @@ function launchTesting(
 		? "java.test.editor.run"
 		: "java.test.editor.debug";
 	vscode.commands.executeCommand(command, uri, progressReporter);
+
 	if (compareVersions.compare(getTestExtensionVersion(), "0.26.1", "<=")) {
 		throw new utility.OperationCancelledError("");
 	}
@@ -526,6 +563,7 @@ function launchTesting(
 function getTestExtensionVersion(): string {
 	const extension: vscode.Extension<any> | undefined =
 		vscode.extensions.getExtension("vscjava.vscode-java-test");
+
 	return extension?.packageJSON.version || "0.0.0";
 }
 
@@ -541,6 +579,7 @@ async function launchMain(
 		vscode.window.showErrorMessage(
 			"Error: Main method not found in the file, please define the main method as: public static void main(String[] args)",
 		);
+
 		throw new utility.OperationCancelledError("");
 	}
 
@@ -553,12 +592,14 @@ async function launchMain(
 		placeHolder,
 		autoPick,
 	);
+
 	if (!pick) {
 		throw new utility.OperationCancelledError("");
 	}
 
 	const existConfig: vscode.DebugConfiguration | undefined =
 		findLaunchConfiguration(pick.mainClass, pick.projectName, uri.fsPath);
+
 	if (existConfig) {
 		progressReporter.setJobName(
 			utility.launchJobName(existConfig.name, noDebug),
@@ -584,20 +625,26 @@ async function runJavaProject(node: any, noDebug: boolean) {
 			`Failed to ${noDebug ? "run" : "debug"} the project because of invalid project node. ` +
 				"This command only applies to Project Explorer view.",
 		);
+
 		const error = new Error(
 			`Failed to ${noDebug ? "run" : "debug"} the project because of invalid project node.`,
 		);
+
 		setUserError(error);
+
 		throw error;
 	}
 
 	const progressReporter = progressProvider.createProgressReporter(
 		noDebug ? "Run" : "Debug",
 	);
+
 	try {
 		progressReporter.report("Resolving main class...");
+
 		const mainClassesOptions: IMainClassOption[] =
 			await utility.searchMainMethods(vscode.Uri.parse(node.uri));
+
 		if (progressReporter.isCancelled()) {
 			throw new utility.OperationCancelledError("");
 		}
@@ -607,6 +654,7 @@ async function runJavaProject(node: any, noDebug: boolean) {
 				`Failed to ${noDebug ? "run" : "debug"} this project '${node._nodeData.displayName || node.name}' ` +
 					"because it does not contain any main class.",
 			);
+
 			throw new utility.OperationCancelledError("");
 		}
 
@@ -617,18 +665,24 @@ async function runJavaProject(node: any, noDebug: boolean) {
 			mainClassesOptions,
 			"Select the main class to run.",
 		);
+
 		if (!pick || progressReporter.isCancelled()) {
 			throw new utility.OperationCancelledError("");
 		}
 
 		const projectName: string | undefined = pick.projectName;
+
 		const mainClass: string = pick.mainClass;
+
 		const filePath: string | undefined = pick.filePath;
+
 		const workspaceFolder: vscode.WorkspaceFolder | undefined = filePath
 			? vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filePath))
 			: undefined;
+
 		const existConfig: vscode.DebugConfiguration | undefined =
 			findLaunchConfiguration(mainClass, projectName, filePath);
+
 		const debugConfig = existConfig || {
 			type: "java",
 			name: `${mainClass.substr(mainClass.lastIndexOf(".") + 1)}`,
@@ -646,6 +700,7 @@ async function runJavaProject(node: any, noDebug: boolean) {
 		vscode.debug.startDebugging(workspaceFolder, debugConfig);
 	} catch (ex) {
 		progressReporter.done();
+
 		if (ex instanceof utility.OperationCancelledError) {
 			return;
 		}
@@ -662,10 +717,13 @@ function findLaunchConfiguration(
 	const workspaceFolder: vscode.WorkspaceFolder | undefined = filePath
 		? vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filePath))
 		: undefined;
+
 	const launchConfigurations: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("launch", workspaceFolder);
+
 	const existingConfigs: vscode.DebugConfiguration[] =
 		launchConfigurations.configurations;
+
 	const existConfig: vscode.DebugConfiguration | undefined = _.find(
 		existingConfigs,
 		(config) => {

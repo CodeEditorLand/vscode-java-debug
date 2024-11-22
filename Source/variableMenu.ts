@@ -106,6 +106,7 @@ async function updateVariableFormatter(key: string, value: any) {
 function refreshVariableView() {
 	const debugSettingsRoot: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("java.debug.settings");
+
 	if (
 		vscode.debug.activeDebugSession &&
 		vscode.debug.activeDebugSession.type === "java"
@@ -127,6 +128,7 @@ function refreshVariableView() {
 async function toggleLazyVariableSetting(toggle: boolean) {
 	const javadDebugSettingsRoot: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("java.debug.settings");
+
 	if (!javadDebugSettingsRoot.showToString) {
 		await javadDebugSettingsRoot.update(
 			"showToString",
@@ -150,6 +152,7 @@ function getConfigurationTarget(
 	key: string,
 ): vscode.ConfigurationTarget {
 	const inspect = vscode.workspace.getConfiguration(section).inspect(key);
+
 	if (inspect && inspect.workspaceFolderValue !== undefined) {
 		return vscode.ConfigurationTarget.WorkspaceFolder;
 	} else if (inspect && inspect.workspaceValue !== undefined) {
@@ -162,6 +165,7 @@ function getConfigurationTarget(
 function updateContextKeys() {
 	const debugSettingsRoot: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("java.debug.settings");
+
 	if (debugSettingsRoot) {
 		vscode.commands.executeCommand(
 			"setContext",
@@ -192,6 +196,7 @@ function updateContextKeys() {
 
 	const globalDebugRoot: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("debug");
+
 	if (globalDebugRoot) {
 		vscode.commands.executeCommand(
 			"setContext",

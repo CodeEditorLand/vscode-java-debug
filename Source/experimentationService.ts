@@ -20,6 +20,7 @@ class ExperimentationTelemetry implements IExperimentationTelemetry {
 
 	public postEvent(eventName: string, props: Map<string, string>): void {
 		const payload: any = { __event_name__: eventName };
+
 		for (const [key, value] of props) {
 			payload[key] = value;
 		}
@@ -40,6 +41,7 @@ export async function initExpService(
 	const packageJson: { [key: string]: any } = require("../package.json");
 	// tslint:disable: no-string-literal
 	const extensionName = `${packageJson["publisher"]}.${packageJson["name"]}`;
+
 	const extensionVersion = packageJson["version"];
 	// tslint:enable: no-string-literal
 

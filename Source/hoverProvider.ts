@@ -22,6 +22,7 @@ import { startDebugging } from "./debugCodeLensProvider";
 import { resolveElementAtSelection } from "./languageServerPlugin";
 
 const JAVA_HOVER_RUN_COMMAND = "java.debug.runHover";
+
 const MAIN_METHOD_REGEX =
 	/^(public|static|final|synchronized|\s+){4,}void\s+main\s*\(\s*String\s*\[\s*\]\s*\w+\s*\)\s*($|\{)/;
 
@@ -42,6 +43,7 @@ class DebugHoverProvider implements Disposable {
 					position.line,
 					position.character,
 				);
+
 				if (element && element.hasMainMethod) {
 					startDebugging(
 						element.declaringType,
@@ -80,11 +82,13 @@ class InternalDebugHoverProvider implements HoverProvider {
 		_token: CancellationToken,
 	): ProviderResult<Hover> {
 		const range = document.getWordRangeAtPosition(position, /\w+/);
+
 		if (!range || document.getText(range) !== "main") {
 			return undefined;
 		}
 
 		const line = document.lineAt(position);
+
 		if (
 			MAIN_METHOD_REGEX.test(line.text.trim()) &&
 			this.isMainMethod(line.text.trim())
@@ -111,12 +115,14 @@ class InternalDebugHoverProvider implements HoverProvider {
 					],
 				},
 			];
+
 			const contributed = new MarkdownString(
 				commands
 					.map((command) => this.convertCommandToMarkdown(command))
 					.join(" | "),
 			);
 			contributed.isTrusted = true;
+
 			return new Hover(contributed);
 		}
 
@@ -125,7 +131,9 @@ class InternalDebugHoverProvider implements HoverProvider {
 
 	private isMainMethod(line: string): boolean {
 		const modifier: string = line.substring(0, line.indexOf("main"));
+
 		const modifiers: string[] = modifier.split(/\s+/);
+
 		return (
 			modifiers.indexOf("public") >= 0 && modifiers.indexOf("static") >= 0
 		);

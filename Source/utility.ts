@@ -14,7 +14,9 @@ import { IProgressReporter } from "./progressAPI";
 
 const TROUBLESHOOTING_LINK =
 	"https://github.com/Microsoft/vscode-java-debug/blob/master/Troubleshooting.md";
+
 const LEARN_MORE = "Learn More";
+
 const JAVA_EXTENSION_ID = "redhat.java";
 
 export class UserError extends Error {
@@ -23,6 +25,7 @@ export class UserError extends Error {
 	constructor(context: ITroubleshootingMessage) {
 		super(context.message);
 		this.context = context;
+
 		setUserError(this);
 	}
 }
@@ -30,6 +33,7 @@ export class UserError extends Error {
 export class JavaExtensionNotEnabledError extends Error {
 	constructor(message: string) {
 		super(message);
+
 		setUserError(this);
 	}
 }
@@ -62,6 +66,7 @@ function logMessage(message: ILoggingMessage): void {
 			message: message.message,
 			stack: message.stack,
 		};
+
 		if (message.type === Type.USAGEERROR) {
 			setUserError(error);
 		}
@@ -76,6 +81,7 @@ export async function showInformationMessage(
 	...items: string[]
 ): Promise<string | undefined> {
 	logMessage(message);
+
 	return vscode.window.showInformationMessage(message.message, ...items);
 }
 
@@ -84,6 +90,7 @@ export async function showWarningMessage(
 	...items: string[]
 ): Promise<string | undefined> {
 	logMessage(message);
+
 	return vscode.window.showWarningMessage(message.message, ...items);
 }
 
@@ -92,6 +99,7 @@ export async function showErrorMessage(
 	...items: string[]
 ): Promise<string | undefined> {
 	logMessage(message);
+
 	return vscode.window.showErrorMessage(message.message, ...items);
 }
 
@@ -100,6 +108,7 @@ export async function showInformationMessageWithTroubleshooting(
 	...items: string[]
 ): Promise<string | undefined> {
 	const choice = await showInformationMessage(message, ...items, LEARN_MORE);
+
 	return handleTroubleshooting(message.message, choice, message.anchor);
 }
 
@@ -108,6 +117,7 @@ export async function showWarningMessageWithTroubleshooting(
 	...items: string[]
 ): Promise<string | undefined> {
 	const choice = await showWarningMessage(message, ...items, LEARN_MORE);
+
 	return handleTroubleshooting(message.message, choice, message.anchor);
 }
 
@@ -116,6 +126,7 @@ export async function showErrorMessageWithTroubleshooting(
 	...items: string[]
 ): Promise<string | undefined> {
 	const choice = await showErrorMessage(message, ...items, LEARN_MORE);
+
 	return handleTroubleshooting(message.message, choice, message.anchor);
 }
 
@@ -126,6 +137,7 @@ function handleTroubleshooting(
 ): string | undefined {
 	if (choice === LEARN_MORE) {
 		openTroubleshootingPage(message, anchor);
+
 		return undefined;
 	}
 
@@ -148,8 +160,11 @@ export function openTroubleshootingPage(message: string, anchor?: string) {
 export async function guideToInstallJavaExtension() {
 	const MESSAGE =
 		"Language Support for Java is required. Please install and enable it.";
+
 	const INSTALL = "Install";
+
 	const choice = await vscode.window.showWarningMessage(MESSAGE, INSTALL);
+
 	if (choice === INSTALL) {
 		await installJavaExtension();
 	}
@@ -166,11 +181,14 @@ async function installJavaExtension() {
 			);
 		},
 	);
+
 	const RELOAD = "Reload Window";
+
 	const choice = await vscode.window.showInformationMessage(
 		"Please reload window to activate Language Support for Java.",
 		RELOAD,
 	);
+
 	if (choice === RELOAD) {
 		await vscode.commands.executeCommand("workbench.action.reloadWindow");
 	}
@@ -178,6 +196,7 @@ async function installJavaExtension() {
 
 export function convertErrorToMessage(err: Error): ILoggingMessage {
 	const properties = formatErrorProperties(err);
+
 	return {
 		type: Type.EXCEPTION,
 		message: properties.message,
@@ -211,6 +230,7 @@ function formatErrorProperties(ex: any): any {
 
 export async function getJavaHome(): Promise<string> {
 	const extensionApi = await getJavaExtensionAPI();
+
 	if (extensionApi && extensionApi.javaRequirement) {
 		return extensionApi.javaRequirement.java_home;
 	}
@@ -222,6 +242,7 @@ export function getJavaExtensionAPI(
 	progressReporter?: IProgressReporter,
 ): Thenable<any> {
 	const extension = vscode.extensions.getExtension(JAVA_EXTENSION_ID);
+
 	if (!extension) {
 		throw new JavaExtensionNotEnabledError(
 			"VS Code Java Extension is not enabled.",
@@ -243,11 +264,13 @@ export function getJavaExtension(): vscode.Extension<any> | undefined {
 
 export function isJavaExtEnabled(): boolean {
 	const javaExt = vscode.extensions.getExtension(JAVA_EXTENSION_ID);
+
 	return !!javaExt;
 }
 
 export function isJavaExtActivated(): boolean {
 	const javaExt = vscode.extensions.getExtension(JAVA_EXTENSION_ID);
+
 	return !!javaExt && javaExt.isActive;
 }
 
@@ -257,6 +280,7 @@ export function isGitBash(isIntegratedTerminal: boolean): boolean {
 		: vscode.workspace
 				.getConfiguration("terminal")
 				?.get("external.windowsExec");
+
 	if (!currentWindowsShellPath) {
 		return false;
 	}
@@ -267,9 +291,11 @@ export function isGitBash(isIntegratedTerminal: boolean): boolean {
 		"Git\\usr\\bin\\bash.exe",
 		"Git\\usr\\bin\\bash",
 	];
+
 	const find: string | undefined = candidates.find((candidate: string) =>
 		currentWindowsShellPath.endsWith(candidate),
 	);
+
 	return !!find;
 }
 
@@ -291,11 +317,13 @@ export async function waitForStandardMode(
 		vscode.ProgressLocation.Notification
 			? "Importing projects, [check details](command:java.show.server.task.status)"
 			: "Importing projects...";
+
 	if (await isImportingProjects()) {
 		progressReporter.report(importMessage);
 	}
 
 	const api = await getJavaExtensionAPI(progressReporter);
+
 	if (!api) {
 		return false;
 	}
@@ -307,12 +335,14 @@ export async function waitForStandardMode(
 			"Yes",
 			"Cancel",
 		);
+
 		if (answer === "Yes") {
 			if (api.serverMode === ServerMode.STANDARD) {
 				return true;
 			}
 
 			progressReporter?.report(importMessage);
+
 			return new Promise<boolean>((resolve) => {
 				progressReporter
 					.getCancellationToken()
@@ -336,6 +366,7 @@ export async function waitForStandardMode(
 		return false;
 	} else if (api && api.serverMode === ServerMode.HYBRID) {
 		progressReporter.report(importMessage);
+
 		return new Promise<boolean>((resolve) => {
 			progressReporter
 				.getCancellationToken()
@@ -367,27 +398,32 @@ export async function searchMainMethodsWithProgress(
 			{ location: vscode.ProgressLocation.Window },
 			async (p) => {
 				p.report({ message: "Searching main classes..." });
+
 				return resolveMainClass(uri);
 			},
 		);
 	} catch (ex) {
 		vscode.window.showErrorMessage(String((ex && ex.message) || ex));
+
 		throw ex;
 	}
 }
 
 async function isImportingProjects(): Promise<boolean> {
 	const extension = vscode.extensions.getExtension(JAVA_EXTENSION_ID);
+
 	if (!extension) {
 		return false;
 	}
 
 	const serverMode = getJavaServerMode();
+
 	if (
 		serverMode === ServerMode.STANDARD ||
 		serverMode === ServerMode.HYBRID
 	) {
 		const allCommands = await vscode.commands.getCommands();
+
 		return (
 			(!extension.isActive &&
 				allCommands.includes("java.show.server.task.status")) ||
@@ -409,6 +445,7 @@ function getJavaServerMode(): ServerMode {
 export function launchJobName(configName: string, noDebug: boolean): string {
 	let jobName = noDebug ? "Run" : "Debug";
 	jobName += configName ? ` '${configName} '` : "";
+
 	return jobName;
 }
 

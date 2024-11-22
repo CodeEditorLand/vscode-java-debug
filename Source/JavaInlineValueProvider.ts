@@ -28,6 +28,7 @@ import {
 
 const protoConverter: ProtocolConverter.Converter =
 	ProtocolConverter.createConverter();
+
 const codeConverter: CodeConverter.Converter = CodeConverter.createConverter();
 
 export class JavaInlineValuesProvider implements InlineValuesProvider {
@@ -52,6 +53,7 @@ export class JavaInlineValuesProvider implements InlineValuesProvider {
 						});
 					},
 				);
+
 				const variables: InlineVariable[] =
 					await resolveInlineVariablesStep();
 
@@ -63,6 +65,7 @@ export class JavaInlineValuesProvider implements InlineValuesProvider {
 							sendInfo(operationId, {
 								inlineVariableCount: 0,
 							});
+
 							return [];
 						}
 
@@ -87,6 +90,7 @@ export class JavaInlineValuesProvider implements InlineValuesProvider {
 						});
 
 						let resolvedVariables: any;
+
 						if (
 							unresolvedVariables.length &&
 							debug.activeDebugSession
@@ -103,7 +107,9 @@ export class JavaInlineValuesProvider implements InlineValuesProvider {
 						}
 
 						const result: InlineValue[] = [];
+
 						let next = 0;
+
 						for (const variable of variables) {
 							if (variable.kind === InlineKind.VariableLookup) {
 								result.push(
@@ -118,6 +124,7 @@ export class JavaInlineValuesProvider implements InlineValuesProvider {
 								resolvedVariables.length > next
 							) {
 								const resolvedValue = resolvedVariables[next++];
+
 								if (resolvedValue) {
 									result.push(
 										new InlineValueText(
@@ -150,6 +157,7 @@ export class JavaInlineValuesProvider implements InlineValuesProvider {
 						return result;
 					},
 				);
+
 				return resolveInlineValuesStep();
 			},
 		);

@@ -37,6 +37,7 @@ const platformNameMappings: { [key: string]: string } = {
 	linux: "linux",
 	darwin: "osx",
 };
+
 const platformName = platformNameMappings[process.platform];
 
 export let lastUsedLaunchConfig: vscode.DebugConfiguration | undefined;
@@ -45,8 +46,10 @@ export class JavaDebugConfigurationProvider
 	implements vscode.DebugConfigurationProvider
 {
 	private isUserSettingsDirty: boolean = true;
+
 	constructor() {
 		const packageJson: { [key: string]: any } = require("../package.json");
+
 		const debugConfigNames = Object.keys(
 			packageJson?.contributes?.configuration?.properties || {},
 		);
@@ -63,6 +66,7 @@ export class JavaDebugConfigurationProvider
 
 				if (vscode.debug.activeDebugSession) {
 					this.isUserSettingsDirty = false;
+
 					return updateDebugSettings(event);
 				} else {
 					this.isUserSettingsDirty = true;
@@ -85,6 +89,7 @@ export class JavaDebugConfigurationProvider
 				);
 			},
 		);
+
 		return provideDebugConfigurationsHandler();
 	}
 
@@ -118,6 +123,7 @@ export class JavaDebugConfigurationProvider
 					// See https://github.com/microsoft/vscode-java-debug/issues/778
 					// Merge the platform specific properties to the global config to simplify the subsequent resolving logic.
 					this.mergePlatformProperties(config, folder);
+
 					return this.resolveAndValidateDebugConfiguration(
 						folder,
 						config,
@@ -128,10 +134,12 @@ export class JavaDebugConfigurationProvider
 						type: Type.EXCEPTION,
 						message: String((ex && ex.message) || ex),
 					});
+
 					return undefined;
 				}
 			},
 		);
+
 		return resolveDebugConfigurationHandler();
 	}
 
@@ -145,6 +153,7 @@ export class JavaDebugConfigurationProvider
 				vscode.ProgressLocation.Window,
 			);
 			progressReporter.observe(token);
+
 			const defaultLaunchConfig = {
 				type: "java",
 				name: "Current File",
@@ -152,23 +161,30 @@ export class JavaDebugConfigurationProvider
 				// tslint:disable-next-line
 				mainClass: "${file}",
 			};
+
 			try {
 				const isOnStandardMode =
 					await utility.waitForStandardMode(progressReporter);
+
 				if (!isOnStandardMode) {
 					resolve([defaultLaunchConfig]);
+
 					return;
 				}
 
 				if (progressReporter.isCancelled()) {
 					resolve([defaultLaunchConfig]);
+
 					return;
 				}
 				progressReporter.report("Generating Java configuration...");
+
 				const mainClasses = await lsPlugin.resolveMainClass(
 					folder ? folder.uri : undefined,
 				);
+
 				const cache = {};
+
 				const launchConfigs = mainClasses.map((item) => {
 					return {
 						...defaultLaunchConfig,
@@ -180,8 +196,10 @@ export class JavaDebugConfigurationProvider
 						projectName: item.projectName,
 					};
 				});
+
 				if (progressReporter.isCancelled()) {
 					resolve([defaultLaunchConfig]);
+
 					return;
 				}
 				resolve([defaultLaunchConfig, ...launchConfigs]);
@@ -221,18 +239,23 @@ export class JavaDebugConfigurationProvider
 		cache: { [key: string]: any },
 	) {
 		const name = `${mainClass.substr(mainClass.lastIndexOf(".") + 1)}`;
+
 		if (cache[name] === undefined) {
 			cache[name] = 0;
+
 			return name;
 		} else {
 			cache[name] += 1;
+
 			return `${name}(${cache[name]})`;
 		}
 	}
 
 	private mergeEnvFile(config: vscode.DebugConfiguration) {
 		const baseEnv = config.env || {};
+
 		let result = baseEnv;
+
 		if (config.envFile) {
 			try {
 				if (typeof config.envFile === "string") {
@@ -265,6 +288,7 @@ export class JavaDebugConfigurationProvider
 		token?: vscode.CancellationToken,
 	) {
 		let configCopy: vscode.DebugConfiguration | undefined;
+
 		const isConfigFromInternal =
 			config.__origin ===
 				"internal" /** in-memory configuration from debugger */ ||
@@ -278,6 +302,7 @@ export class JavaDebugConfigurationProvider
 		let progressReporter = progressProvider.getProgressReporter(
 			config.__progressId,
 		);
+
 		if (!progressReporter && config.__progressId) {
 			return undefined;
 		} else if (!progressReporter) {
@@ -287,6 +312,7 @@ export class JavaDebugConfigurationProvider
 		}
 
 		progressReporter.observe(token);
+
 		if (progressReporter.isCancelled()) {
 			return undefined;
 		}
@@ -294,6 +320,7 @@ export class JavaDebugConfigurationProvider
 		try {
 			const isOnStandardMode =
 				await utility.waitForStandardMode(progressReporter);
+
 			if (!isOnStandardMode || progressReporter.isCancelled()) {
 				return undefined;
 			}
@@ -316,6 +343,7 @@ export class JavaDebugConfigurationProvider
 					config,
 					progressReporter,
 				);
+
 				if (!mainClassOption || !mainClassOption.mainClass) {
 					// Exit silently if the user cancels the prompt fix by ESC.
 					// Exit the debug session.
@@ -324,6 +352,7 @@ export class JavaDebugConfigurationProvider
 
 				config.mainClass = mainClassOption.mainClass;
 				config.projectName = mainClassOption.projectName;
+
 				if (
 					config.__workspaceFolder &&
 					config.__workspaceFolder !== folder
@@ -345,6 +374,7 @@ export class JavaDebugConfigurationProvider
 
 				if (needsBuildWorkspace()) {
 					progressReporter.report("Compiling...");
+
 					const proceed = await buildWorkspace(
 						{
 							mainClass: mainClassOption.mainClass,
@@ -353,6 +383,7 @@ export class JavaDebugConfigurationProvider
 						},
 						progressReporter,
 					);
+
 					if (!proceed) {
 						return undefined;
 					}
@@ -448,6 +479,7 @@ export class JavaDebugConfigurationProvider
 
 				// Add the default launch options to the config.
 				config.cwd = config.cwd || _.get(folder, "uri.fsPath");
+
 				if (Array.isArray(config.args)) {
 					config.args = this.concatArgs(config.args);
 				}
@@ -509,20 +541,24 @@ export class JavaDebugConfigurationProvider
 					}
 
 					const pid: number = Number(config.processId);
+
 					if (Number.isNaN(pid)) {
 						vscode.window.showErrorMessage(
 							`The processId config '${config.processId}' is not a valid process id.`,
 						);
+
 						return undefined;
 					}
 
 					const javaProcess = await resolveJavaProcess(pid);
+
 					if (!javaProcess) {
 						vscode.window.showErrorMessage(
 							`Attach to process: pid '${config.processId}' is not a debuggable Java process. ` +
 								`Please make sure the process has turned on debug mode using vmArgs like ` +
 								`'-agentlib:jdwp=transport=dt_socket,server=y,address=5005.'`,
 						);
+
 						return undefined;
 					}
 
@@ -556,20 +592,24 @@ export class JavaDebugConfigurationProvider
 			}
 
 			delete config.__progressId;
+
 			return config;
 		} catch (ex) {
 			if (ex instanceof utility.JavaExtensionNotEnabledError) {
 				utility.guideToInstallJavaExtension();
+
 				return undefined;
 			}
 			if (ex instanceof utility.UserError) {
 				utility.showErrorMessageWithTroubleshooting(ex.context);
+
 				return undefined;
 			}
 
 			utility.showErrorMessageWithTroubleshooting(
 				utility.convertErrorToMessage(ex),
 			);
+
 			return undefined;
 		} finally {
 			if (configCopy && config.mainClass) {
@@ -600,20 +640,25 @@ export class JavaDebugConfigurationProvider
 			ClasspathVariable.Runtime,
 			ClasspathVariable.Test,
 		];
+
 		const containedVariables: string[] = pathArray.filter((cp: string) =>
 			pathVariables.includes(cp),
 		);
+
 		if (_.isEmpty(containedVariables)) {
 			return this.filterExcluded(folder, pathArray);
 		}
 
 		const scope: string | undefined = this.mergeScope(containedVariables);
+
 		const response: any[] = <any[]>(
 			await lsPlugin.resolveClasspath(mainClass, projectName, scope)
 		);
+
 		const resolvedPaths: string[] = isModulePath
 			? response?.[0]
 			: response?.[1];
+
 		if (!resolvedPaths) {
 			// tslint:disable-next-line:no-console
 			console.log(
@@ -621,7 +666,9 @@ export class JavaDebugConfigurationProvider
 			);
 		}
 		const paths: string[] = [];
+
 		let replaced: boolean = false;
+
 		for (const p of pathArray) {
 			if (pathVariables.includes(p)) {
 				if (!replaced) {
@@ -640,10 +687,13 @@ export class JavaDebugConfigurationProvider
 		paths: string[],
 	): Promise<string[]> {
 		const result: string[] = [];
+
 		const excludes: Map<string, boolean> = new Map<string, boolean>();
+
 		for (const p of paths) {
 			if (p.startsWith("!")) {
 				let exclude = p.substr(1);
+
 				if (!path.isAbsolute(exclude)) {
 					exclude = path.join(folder?.uri.fsPath || "", exclude);
 				}
@@ -652,6 +702,7 @@ export class JavaDebugConfigurationProvider
 					vscode.Uri.file(exclude).fsPath,
 					this.isFilePath(exclude),
 				);
+
 				continue;
 			}
 
@@ -727,14 +778,17 @@ export class JavaDebugConfigurationProvider
 		// Validate it if the mainClass is already set in launch configuration.
 		if (config.mainClass && !this.isFilePath(config.mainClass)) {
 			progressReporter.report("Resolving main class...");
+
 			const containsExternalClasspaths =
 				!_.isEmpty(config.classPaths) || !_.isEmpty(config.modulePaths);
+
 			const validationResponse = await lsPlugin.validateLaunchConfig(
 				config.mainClass,
 				config.projectName,
 				containsExternalClasspaths,
 				folder,
 			);
+
 			if (progressReporter.isCancelled()) {
 				return undefined;
 			} else if (
@@ -764,10 +818,12 @@ export class JavaDebugConfigurationProvider
 	): Promise<lsPlugin.IMainClassOption | undefined> {
 		if (config.projectName) {
 			progressReporter.report("Resolving main class...");
+
 			if (this.isFilePath(config.mainClass)) {
 				const mainEntries = await lsPlugin.resolveMainMethod(
 					vscode.Uri.file(config.mainClass),
 				);
+
 				if (progressReporter.isCancelled()) {
 					return undefined;
 				} else if (mainEntries.length) {
@@ -792,10 +848,12 @@ export class JavaDebugConfigurationProvider
 		const currentFile =
 			config.mainClass ||
 			vscode.window.activeTextEditor?.document.uri.fsPath;
+
 		if (currentFile) {
 			const mainEntries = await lsPlugin.resolveMainMethod(
 				vscode.Uri.file(currentFile),
 			);
+
 			if (progressReporter.isCancelled()) {
 				return undefined;
 			} else if (mainEntries.length) {
@@ -816,6 +874,7 @@ export class JavaDebugConfigurationProvider
 				utility.launchJobName(config.name, config.noDebug),
 			);
 			progressReporter.report("Resolving main class...");
+
 			return {
 				mainClass: config.mainClass,
 				projectName: config.projectName,
@@ -823,9 +882,11 @@ export class JavaDebugConfigurationProvider
 		}
 
 		progressReporter.report("Resolving main class...");
+
 		const hintMessage = currentFile
 			? `The file '${path.basename(currentFile)}' is not executable, please select a main class you want to run.`
 			: "Please select a main class you want to run.";
+
 		return this.promptMainClassUnderPath(
 			undefined,
 			progressReporter,
@@ -852,10 +913,13 @@ export class JavaDebugConfigurationProvider
 		switch (error.kind) {
 			case lsPlugin.CONFIGERROR_INVALID_CLASS_NAME:
 				return "ConfigError: mainClass was configured with an invalid class name.";
+
 			case lsPlugin.CONFIGERROR_MAIN_CLASS_NOT_EXIST:
 				return "ConfigError: mainClass does not exist.";
+
 			case lsPlugin.CONFIGERROR_MAIN_CLASS_NOT_UNIQUE:
 				return "ConfigError: mainClass is not unique in the workspace";
+
 			case lsPlugin.CONFIGERROR_INVALID_JAVA_PROJECT:
 				return "ConfigError: could not find a Java project with the configured projectName.";
 		}
@@ -870,26 +934,31 @@ export class JavaDebugConfigurationProvider
 		progressReporter: IProgressReporter,
 	): Promise<lsPlugin.IMainClassOption | undefined> {
 		const errors: string[] = [];
+
 		if (!validationResponse.mainClass.isValid) {
 			errors.push(String(validationResponse.mainClass.message));
+
 			const errorLog: Error = {
 				name: "error",
 				message: this.getValidationErrorMessage(
 					validationResponse.mainClass,
 				),
 			};
+
 			setUserError(errorLog);
 			sendError(errorLog);
 		}
 
 		if (!validationResponse.projectName.isValid) {
 			errors.push(String(validationResponse.projectName.message));
+
 			const errorLog: Error = {
 				name: "error",
 				message: this.getValidationErrorMessage(
 					validationResponse.projectName,
 				),
 			};
+
 			setUserError(errorLog);
 			sendError(errorLog);
 		}
@@ -899,6 +968,7 @@ export class JavaDebugConfigurationProvider
 			validationResponse.proposals.length
 		) {
 			progressReporter.hide(true);
+
 			const answer = await utility.showErrorMessageWithTroubleshooting(
 				{
 					message: errors.join(os.EOL),
@@ -908,12 +978,14 @@ export class JavaDebugConfigurationProvider
 				},
 				"Fix",
 			);
+
 			if (answer === "Fix") {
 				const selectedFix = await mainClassPicker.showQuickPick(
 					validationResponse.proposals,
 					"Please select main class<project name>.",
 					false,
 				);
+
 				if (selectedFix) {
 					sendInfo("", {
 						fix: "yes",
@@ -960,11 +1032,14 @@ export class JavaDebugConfigurationProvider
 	): Promise<void> {
 		const launchConfigurations: vscode.WorkspaceConfiguration =
 			vscode.workspace.getConfiguration("launch", folder);
+
 		const rawConfigs: vscode.DebugConfiguration[] =
 			launchConfigurations.configurations;
+
 		const targetIndex: number = _.findIndex(rawConfigs, (config) =>
 			_.isEqual(config, oldConfig),
 		);
+
 		if (targetIndex >= 0) {
 			rawConfigs[targetIndex] = newConfig;
 			await launchConfigurations.update("configurations", rawConfigs);
@@ -977,12 +1052,14 @@ export class JavaDebugConfigurationProvider
 		hintMessage?: string,
 	): Promise<lsPlugin.IMainClassOption | undefined> {
 		const res = await lsPlugin.resolveMainClass(folder);
+
 		if (progressReporter.isCancelled()) {
 			return undefined;
 		} else if (res.length === 0) {
 			const workspaceFolder = folder
 				? vscode.workspace.getWorkspaceFolder(folder)
 				: undefined;
+
 			throw new utility.UserError({
 				message: `Cannot find a class with the main method${workspaceFolder ? " in the folder '" + workspaceFolder.name + "'" : ""}.`,
 				type: Type.USAGEERROR,
@@ -1005,6 +1082,7 @@ export class JavaDebugConfigurationProvider
 		hintMessage?: string,
 	): Promise<lsPlugin.IMainClassOption | undefined> {
 		const res = await lsPlugin.resolveMainClassFromProject(projectName);
+
 		if (progressReporter.isCancelled()) {
 			return undefined;
 		} else if (res.length === 0) {
@@ -1028,11 +1106,14 @@ export class JavaDebugConfigurationProvider
 async function updateDebugSettings(event?: vscode.ConfigurationChangeEvent) {
 	const debugSettingsRoot: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("java.debug");
+
 	if (!debugSettingsRoot) {
 		return;
 	}
 	const logLevel = convertLogLevel(debugSettingsRoot.logLevel || "");
+
 	const javaHome = await utility.getJavaHome();
+
 	if (
 		debugSettingsRoot.settings &&
 		Object.keys(debugSettingsRoot.settings).length
@@ -1049,6 +1130,7 @@ async function updateDebugSettings(event?: vscode.ConfigurationChangeEvent) {
 				skipConstructors:
 					debugSettingsRoot.settings.stepping.skipConstructors,
 			};
+
 			const exceptionFilters = {
 				exceptionTypes:
 					debugSettingsRoot.settings.exceptionBreakpoint
@@ -1061,6 +1143,7 @@ async function updateDebugSettings(event?: vscode.ConfigurationChangeEvent) {
 			};
 
 			const asyncJDWP: string = debugSettingsRoot.settings.jdwp.async;
+
 			const settings = await commands.executeJavaLanguageServerCommand(
 				commands.JAVA_UPDATE_DEBUG_SETTINGS,
 				JSON.stringify({
@@ -1092,6 +1175,7 @@ async function updateDebugSettings(event?: vscode.ConfigurationChangeEvent) {
 					asyncJDWP,
 				}),
 			);
+
 			if (logLevel === "FINE") {
 				// tslint:disable-next-line:no-console
 				console.log("settings:", settings);
@@ -1107,6 +1191,7 @@ async function updateDebugSettings(event?: vscode.ConfigurationChangeEvent) {
 function needsBuildWorkspace(): boolean {
 	const javaConfig: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("java");
+
 	return javaConfig?.debug?.settings?.forceBuildBeforeLaunch;
 }
 
@@ -1115,12 +1200,16 @@ function convertLogLevel(commonLogLevel: string) {
 	switch (commonLogLevel.toLowerCase()) {
 		case "verbose":
 			return "FINE";
+
 		case "warn":
 			return "WARNING";
+
 		case "error":
 			return "SEVERE";
+
 		case "info":
 			return "INFO";
+
 		default:
 			return "FINE";
 	}
@@ -1133,6 +1222,7 @@ function readEnvFile(file: string): { [key: string]: string } {
 	}
 
 	const buffer = stripBOM(fs.readFileSync(file, "utf8"));
+
 	const env = dotenv.parse(Buffer.from(buffer));
 
 	return env;

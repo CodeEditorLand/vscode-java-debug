@@ -60,6 +60,7 @@ export function initializeHotCodeReplace(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.debug.onDidTerminateDebugSession((session) => {
 			const t = session ? session.type : undefined;
+
 			if (t === JAVA_LANGID) {
 				suppressedReasons.clear();
 			}
@@ -76,6 +77,7 @@ export function handleHotCodeReplaceCustomEvent(
 				{ location: vscode.ProgressLocation.Window },
 				(progress) => {
 					progress.report({ message: "Applying code changes..." });
+
 					return hcrEvent.session.customRequest("redefineClasses");
 				},
 			);

@@ -35,13 +35,18 @@ export class JavaTerminalLinkProvder
 		const isDebuggerTerminal: boolean =
 			context.terminal.name.startsWith("Run:") ||
 			context.terminal.name.startsWith("Debug:");
+
 		const regex = new RegExp(
 			"(\\sat\\s+)([\\w$\\.]+\\/)?(([\\w$]+\\.)+[<\\w$>]+)\\(([\\w-$]+\\.java:\\d+)\\)",
 		);
+
 		const result: RegExpExecArray | null = regex.exec(context.line);
+
 		if (result && result.length) {
 			const stackTrace = `${result[2] || ""}${result[3]}(${result[5]})`;
+
 			const sourceLineNumber = Number(result[5].split(":")[1]);
+
 			return [
 				{
 					startIndex: result.index + result[1].length,
@@ -65,7 +70,9 @@ export class JavaTerminalLinkProvder
 			operationName: "handleJavaTerminalLink",
 			isDebuggerTerminal: String(link.isDebuggerTerminal),
 		});
+
 		const uri = await resolveSourceUri(link.stackTrace);
+
 		if (uri) {
 			const lineNumber = Math.max(link.lineNumber - 1, 0);
 			window.showTextDocument(Uri.parse(uri), {
@@ -81,6 +88,7 @@ export class JavaTerminalLinkProvder
 				0,
 				link.methodName.lastIndexOf("."),
 			);
+
 			const className = fullyQualifiedName.substring(
 				fullyQualifiedName.lastIndexOf(".") + 1,
 			);

@@ -24,8 +24,10 @@ export class JavaDebugAdapterDescriptorFactory
 		_executable: DebugAdapterExecutable,
 	): Promise<DebugAdapterDescriptor | undefined> {
 		let error: Error | undefined;
+
 		try {
 			const debugServerPort = <number>await startDebugSession();
+
 			if (debugServerPort) {
 				return new DebugAdapterServer(debugServerPort);
 			} else {
@@ -44,6 +46,7 @@ export class JavaDebugAdapterDescriptorFactory
 					message: "Failed to start debug server.",
 				};
 		showErrorMessageWithTroubleshooting(message);
+
 		return undefined;
 	}
 }
