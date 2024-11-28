@@ -24,9 +24,13 @@ export interface IMainMethod extends IMainClassOption {
 }
 
 export const CONFIGERROR_INVALID_CLASS_NAME = 1;
+
 export const CONFIGERROR_MAIN_CLASS_NOT_EXIST = 2;
+
 export const CONFIGERROR_MAIN_CLASS_NOT_UNIQUE = 3;
+
 export const CONFIGERROR_INVALID_JAVA_PROJECT = 4;
+
 export interface IValidationResult {
 	readonly isValid: boolean;
 	readonly message?: string;
@@ -156,6 +160,7 @@ export function checkProjectSettings(
 
 const COMPILER_PB_ENABLE_PREVIEW_FEATURES: string =
 	"org.eclipse.jdt.core.compiler.problem.enablePreviewFeatures";
+
 export async function detectPreviewFlag(
 	className: string,
 	projectName: string,
