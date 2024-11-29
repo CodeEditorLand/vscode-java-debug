@@ -53,6 +53,7 @@ export class JavaDebugConfigurationProvider
 		const debugConfigNames = Object.keys(
 			packageJson?.contributes?.configuration?.properties || {},
 		);
+
 		vscode.workspace.onDidChangeConfiguration((event) => {
 			if (event.affectsConfiguration("java.debug")) {
 				for (const key of debugConfigNames) {
@@ -72,6 +73,7 @@ export class JavaDebugConfigurationProvider
 					this.isUserSettingsDirty = true;
 				}
 			}
+
 			return undefined;
 		});
 	}
@@ -102,8 +104,11 @@ export class JavaDebugConfigurationProvider
 		// If no debug configuration is provided, then generate one in memory.
 		if (this.isEmptyConfig(config)) {
 			config.type = "java";
+
 			config.name = "Java Debug";
+
 			config.request = "launch";
+
 			config.__origin = "internal";
 		}
 
@@ -152,6 +157,7 @@ export class JavaDebugConfigurationProvider
 				"Create launch.json",
 				vscode.ProgressLocation.Window,
 			);
+
 			progressReporter.observe(token);
 
 			const defaultLaunchConfig = {
@@ -177,6 +183,7 @@ export class JavaDebugConfigurationProvider
 
 					return;
 				}
+
 				progressReporter.report("Generating Java configuration...");
 
 				const mainClasses = await lsPlugin.resolveMainClass(
@@ -202,6 +209,7 @@ export class JavaDebugConfigurationProvider
 
 					return;
 				}
+
 				resolve([defaultLaunchConfig, ...launchConfigs]);
 			} catch (ex) {
 				if (ex instanceof utility.JavaExtensionNotEnabledError) {
@@ -227,6 +235,7 @@ export class JavaDebugConfigurationProvider
 				for (const key of Object.keys(config[platformName])) {
 					config[key] = config[platformName][key];
 				}
+
 				config[platformName] = undefined;
 			} catch {
 				// do nothing
@@ -264,6 +273,7 @@ export class JavaDebugConfigurationProvider
 						...readEnvFile(config.envFile),
 					};
 				}
+
 				if (Array.isArray(config.envFile)) {
 					config.envFile.forEach((f) => {
 						result = {
@@ -279,6 +289,7 @@ export class JavaDebugConfigurationProvider
 				});
 			}
 		}
+
 		config.env = result;
 	}
 
@@ -295,7 +306,9 @@ export class JavaDebugConfigurationProvider
 			config.__configurationTarget; /** configuration from launch.json */
 		if (config.request === "launch" && isConfigFromInternal) {
 			configCopy = _.cloneDeep(config);
+
 			delete configCopy.__progressId;
+
 			delete configCopy.noDebug;
 		}
 
@@ -327,13 +340,16 @@ export class JavaDebugConfigurationProvider
 
 			if (this.isUserSettingsDirty) {
 				this.isUserSettingsDirty = false;
+
 				await updateDebugSettings();
 			}
 
 			// If no debug configuration is provided, then generate one in memory.
 			if (this.isEmptyConfig(config)) {
 				config.type = "java";
+
 				config.name = "Java Debug";
+
 				config.request = "launch";
 			}
 
@@ -351,6 +367,7 @@ export class JavaDebugConfigurationProvider
 				}
 
 				config.mainClass = mainClassOption.mainClass;
+
 				config.projectName = mainClassOption.projectName;
 
 				if (
@@ -364,10 +381,12 @@ export class JavaDebugConfigurationProvider
 					config.name = config.mainClass.substr(
 						config.mainClass.lastIndexOf(".") + 1,
 					);
+
 					progressReporter.setJobName(
 						utility.launchJobName(config.name, config.noDebug),
 					);
 				}
+
 				if (progressReporter.isCancelled()) {
 					return undefined;
 				}
@@ -394,6 +413,7 @@ export class JavaDebugConfigurationProvider
 				}
 
 				progressReporter.report("Resolving launch configuration...");
+
 				this.mergeEnvFile(config);
 				// If the user doesn't specify 'vmArgs' in launch.json, use the global setting to get the default vmArgs.
 				if (config.vmArgs === undefined) {
@@ -401,6 +421,7 @@ export class JavaDebugConfigurationProvider
 						vscode.workspace.getConfiguration(
 							"java.debug.settings",
 						);
+
 					config.vmArgs = debugSettings.vmArgs;
 				}
 				// If the user doesn't specify 'console' in launch.json, use the global setting to get the launch console.
@@ -409,6 +430,7 @@ export class JavaDebugConfigurationProvider
 						vscode.workspace.getConfiguration(
 							"java.debug.settings",
 						);
+
 					config.console = debugSettings.console;
 				}
 				// If the console is integratedTerminal, don't auto switch the focus to DEBUG CONSOLE.
@@ -433,7 +455,9 @@ export class JavaDebugConfigurationProvider
 							config.projectName,
 						)
 					);
+
 					config.modulePaths = result[0];
+
 					config.classPaths = result[1];
 				} else {
 					config.modulePaths = await this.resolvePath(
@@ -443,6 +467,7 @@ export class JavaDebugConfigurationProvider
 						config.projectName,
 						true /*isModulePath*/,
 					);
+
 					config.classPaths = await this.resolvePath(
 						folder,
 						config.classPaths,
@@ -451,6 +476,7 @@ export class JavaDebugConfigurationProvider
 						false /*isModulePath*/,
 					);
 				}
+
 				if (
 					_.isEmpty(config.classPaths) &&
 					_.isEmpty(config.modulePaths)
@@ -505,6 +531,7 @@ export class JavaDebugConfigurationProvider
 					)
 				) {
 					config.vmArgs = (config.vmArgs || "") + " --enable-preview";
+
 					validateRuntimeCompatibility(targetJavaVersion);
 				}
 
@@ -532,6 +559,7 @@ export class JavaDebugConfigurationProvider
 					Number.isInteger(Number(config.port))
 				) {
 					config.port = Number(config.port);
+
 					config.processId = undefined;
 					// Continue if the hostName and port are configured.
 				} else if (config.processId !== undefined) {
@@ -563,7 +591,9 @@ export class JavaDebugConfigurationProvider
 					}
 
 					config.processId = undefined;
+
 					config.hostName = javaProcess.hostName;
+
 					config.port = javaProcess.debugPort;
 				} else {
 					throw new utility.UserError({
@@ -600,6 +630,7 @@ export class JavaDebugConfigurationProvider
 
 				return undefined;
 			}
+
 			if (ex instanceof utility.UserError) {
 				utility.showErrorMessageWithTroubleshooting(ex.context);
 
@@ -614,9 +645,13 @@ export class JavaDebugConfigurationProvider
 		} finally {
 			if (configCopy && config.mainClass) {
 				configCopy.name = config.name;
+
 				configCopy.mainClass = config.mainClass;
+
 				configCopy.projectName = config.projectName;
+
 				configCopy.__workspaceFolder = folder;
+
 				lastUsedLaunchConfig = configCopy;
 			}
 
@@ -665,6 +700,7 @@ export class JavaDebugConfigurationProvider
 				"The Java Language Server failed to resolve the classpaths/modulepaths",
 			);
 		}
+
 		const paths: string[] = [];
 
 		let replaced: boolean = false;
@@ -673,12 +709,16 @@ export class JavaDebugConfigurationProvider
 			if (pathVariables.includes(p)) {
 				if (!replaced) {
 					paths.push(...resolvedPaths);
+
 					replaced = true;
 				}
+
 				continue;
 			}
+
 			paths.push(p);
 		}
+
 		return this.filterExcluded(folder, paths);
 	}
 
@@ -751,6 +791,7 @@ export class JavaDebugConfigurationProvider
 				if (/["\s]/.test(str)) {
 					return '"' + str.replace(/(["\\])/g, "\\$1") + '"';
 				}
+
 				return str;
 
 				// if it has only single quotes
@@ -830,6 +871,7 @@ export class JavaDebugConfigurationProvider
 					if (!mainClassPicker.isAutoPicked(mainEntries)) {
 						progressReporter.hide(true);
 					}
+
 					return mainClassPicker.showQuickPick(
 						mainEntries,
 						"Please select a main class you want to run.",
@@ -860,6 +902,7 @@ export class JavaDebugConfigurationProvider
 				if (!mainClassPicker.isAutoPicked(mainEntries)) {
 					progressReporter.hide(true);
 				}
+
 				return mainClassPicker.showQuickPick(
 					mainEntries,
 					"Please select a main class you want to run.",
@@ -870,9 +913,11 @@ export class JavaDebugConfigurationProvider
 		// If current file is not executable, run previously used launch config.
 		if (lastUsedLaunchConfig) {
 			Object.assign(config, lastUsedLaunchConfig);
+
 			progressReporter.setJobName(
 				utility.launchJobName(config.name, config.noDebug),
 			);
+
 			progressReporter.report("Resolving main class...");
 
 			return {
@@ -946,6 +991,7 @@ export class JavaDebugConfigurationProvider
 			};
 
 			setUserError(errorLog);
+
 			sendError(errorLog);
 		}
 
@@ -960,6 +1006,7 @@ export class JavaDebugConfigurationProvider
 			};
 
 			setUserError(errorLog);
+
 			sendError(errorLog);
 		}
 
@@ -992,6 +1039,7 @@ export class JavaDebugConfigurationProvider
 						fixMessage:
 							"Fix the configs of mainClass and projectName",
 					});
+
 					await this.persistMainClassOption(
 						folder,
 						config,
@@ -1019,7 +1067,9 @@ export class JavaDebugConfigurationProvider
 		change: lsPlugin.IMainClassOption,
 	): Promise<void> {
 		const newConfig: vscode.DebugConfiguration = _.cloneDeep(oldConfig);
+
 		newConfig.mainClass = change.mainClass;
+
 		newConfig.projectName = change.projectName;
 
 		return this.persistLaunchConfig(folder, oldConfig, newConfig);
@@ -1042,6 +1092,7 @@ export class JavaDebugConfigurationProvider
 
 		if (targetIndex >= 0) {
 			rawConfigs[targetIndex] = newConfig;
+
 			await launchConfigurations.update("configurations", rawConfigs);
 		}
 	}
@@ -1070,6 +1121,7 @@ export class JavaDebugConfigurationProvider
 		if (!mainClassPicker.isAutoPicked(res)) {
 			progressReporter.hide(true);
 		}
+
 		return mainClassPicker.showQuickPickWithRecentlyUsed(
 			res,
 			hintMessage || "Select main class<project name>",
@@ -1096,6 +1148,7 @@ export class JavaDebugConfigurationProvider
 		if (!mainClassPicker.isAutoPicked(res)) {
 			progressReporter.hide(true);
 		}
+
 		return mainClassPicker.showQuickPickWithRecentlyUsed(
 			res,
 			hintMessage || "Select main class<project name>",
@@ -1110,6 +1163,7 @@ async function updateDebugSettings(event?: vscode.ConfigurationChangeEvent) {
 	if (!debugSettingsRoot) {
 		return;
 	}
+
 	const logLevel = convertLogLevel(debugSettingsRoot.logLevel || "");
 
 	const javaHome = await utility.getJavaHome();
@@ -1232,5 +1286,6 @@ function stripBOM(s: string): string {
 	if (s && s[0] === "\uFEFF") {
 		s = s.substr(1);
 	}
+
 	return s;
 }

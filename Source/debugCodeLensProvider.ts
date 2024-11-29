@@ -67,9 +67,13 @@ function isActivatedByJavaFile(): boolean {
 
 class DebugCodeLensContainer implements vscode.Disposable {
 	private runCommand: vscode.Disposable;
+
 	private debugCommand: vscode.Disposable;
+
 	private lensProvider: vscode.Disposable | undefined;
+
 	private hoverProvider: vscode.Disposable | undefined;
+
 	private configurationEvent: vscode.Disposable;
 
 	constructor() {
@@ -77,6 +81,7 @@ class DebugCodeLensContainer implements vscode.Disposable {
 			JAVA_RUN_CODELENS_COMMAND,
 			runJavaProgram,
 		);
+
 		this.debugCommand = instrumentOperationAsVsCodeCommand(
 			JAVA_DEBUG_CODELENS_COMMAND,
 			debugJavaProgram,
@@ -118,11 +123,13 @@ class DebugCodeLensContainer implements vscode.Disposable {
 							);
 					} else if (!newEnabled && this.lensProvider !== undefined) {
 						this.lensProvider.dispose();
+
 						this.lensProvider = undefined;
 					}
 
 					if (newEnabled && this.hoverProvider) {
 						this.hoverProvider.dispose();
+
 						this.hoverProvider = undefined;
 					} else if (!newEnabled && !this.hoverProvider) {
 						this.hoverProvider = initializeHoverProvider();
@@ -137,11 +144,15 @@ class DebugCodeLensContainer implements vscode.Disposable {
 		if (this.lensProvider !== undefined) {
 			this.lensProvider.dispose();
 		}
+
 		if (this.hoverProvider) {
 			this.hoverProvider.dispose();
 		}
+
 		this.runCommand.dispose();
+
 		this.debugCommand.dispose();
+
 		this.configurationEvent.dispose();
 	}
 }
@@ -250,6 +261,7 @@ async function constructDebugConfig(
 			try {
 				// Insert the default debug configuration to the beginning of launch.json.
 				rawConfigs.splice(0, 0, debugConfig);
+
 				await launchConfigurations.update(
 					"configurations",
 					rawConfigs,
@@ -310,9 +322,13 @@ export async function startDebugging(
 		projectName,
 		workspaceUri,
 	);
+
 	debugConfig.projectName = projectName;
+
 	debugConfig.noDebug = noDebug;
+
 	debugConfig.__progressId = progressReporter?.getId();
+
 	debugConfig.__origin = "internal";
 
 	return vscode.debug.startDebugging(workspaceFolder, debugConfig);
@@ -334,6 +350,7 @@ async function addToClasspath(uri: vscode.Uri): Promise<boolean> {
 	if (parentPath === parentUri.fsPath) {
 		parentPath = path.basename(parentFsPath);
 	}
+
 	sendInfo("", { operationName: "notOnClasspath" });
 
 	const ans = await vscode.window.showWarningMessage(
@@ -347,6 +364,7 @@ async function addToClasspath(uri: vscode.Uri): Promise<boolean> {
 		return true;
 	} else if (ans === "Add to Source Path") {
 		sendInfo("", { operationName: "addToSourcePath" });
+
 		vscode.commands.executeCommand(
 			"java.project.addToSourcePath.command",
 			parentUri,

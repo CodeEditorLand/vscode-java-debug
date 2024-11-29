@@ -48,6 +48,7 @@ class MainClassPicker {
 		} else if (typeof parameter3 === "boolean") {
 			autoPick = parameter3;
 		}
+
 		if (typeof parameter4 === "boolean") {
 			autoPick = parameter4;
 		}
@@ -76,6 +77,7 @@ class MainClassPicker {
 		if (selected) {
 			return selected.data;
 		}
+
 		return undefined;
 	}
 
@@ -113,6 +115,7 @@ class MainClassPicker {
 		} else if (typeof parameter3 === "boolean") {
 			autoPick = parameter3;
 		}
+
 		if (typeof parameter4 === "boolean") {
 			autoPick = parameter4;
 		}
@@ -153,6 +156,7 @@ class MainClassPicker {
 			if (option.filePath && currentActiveFile) {
 				return path.relative(option.filePath, currentActiveFile) === "";
 			}
+
 			return false;
 		};
 
@@ -164,11 +168,13 @@ class MainClassPicker {
 		// then the Main Class from Active Editor as second,
 		// finally other Main Class.
 		const adjustedOptions: IMainClassOption[] = [];
+
 		options.forEach((option: IMainClassOption) => {
 			if (isPrivileged(option)) {
 				adjustedOptions.push(option);
 			}
 		});
+
 		options.forEach((option: IMainClassOption) => {
 			if (!isPrivileged(option)) {
 				adjustedOptions.push(option);
@@ -213,6 +219,7 @@ class MainClassPicker {
 
 			return selected.data;
 		}
+
 		return undefined;
 	}
 

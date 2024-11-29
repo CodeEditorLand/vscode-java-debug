@@ -81,6 +81,7 @@ export class JavaInlineValuesProvider implements InlineValuesProvider {
 									declaringClass: variable.declaringClass,
 								};
 							});
+
 						sendInfo(operationId, {
 							inlineVariableCount: variables.length,
 							inlineVariableLookupCount:
@@ -103,6 +104,7 @@ export class JavaInlineValuesProvider implements InlineValuesProvider {
 										variables: unresolvedVariables,
 									},
 								);
+
 							resolvedVariables = response?.variables;
 						}
 

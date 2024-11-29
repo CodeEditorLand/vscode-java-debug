@@ -30,8 +30,11 @@ enum CompileWorkspaceStatus {
 
 export interface BuildParams {
 	readonly mainClass: string;
+
 	readonly projectName?: string;
+
 	readonly filePath?: string;
+
 	readonly isFullBuild: boolean;
 }
 
@@ -77,6 +80,7 @@ export async function buildWorkspace(
 		const elapsed = new Date().getTime() - startAt;
 
 		const humanVisibleDelay = elapsed < 150 ? 150 : 0;
+
 		await new Promise((resolve) => {
 			setTimeout(() => {
 				// set a timeout so user still can see a compiling message.
@@ -116,6 +120,7 @@ async function handleBuildFailure(
 	});
 
 	setErrorCode(error, Number(err));
+
 	sendOperationError(operationId, "build", error);
 
 	const errorDiagnostics = traceErrorTypes(operationId);
@@ -137,6 +142,7 @@ async function handleBuildFailure(
 			"Always Continue",
 			"Fix...",
 		);
+
 		sendInfo(operationId, {
 			operationName: "build",
 			choiceForBuildError: ans || "esc",
@@ -147,6 +153,7 @@ async function handleBuildFailure(
 		} else if (ans === "Always Continue") {
 			const debugSettings: vscode.WorkspaceConfiguration =
 				vscode.workspace.getConfiguration("java.debug.settings");
+
 			debugSettings?.update("onBuildFailureProceed", true);
 
 			return true;
@@ -177,7 +184,9 @@ function traceErrorTypes(operationId: string): boolean {
 					typeof diagnostic.code === "object"
 						? String(diagnostic.code.value)
 						: String(diagnostic.code);
+
 				errorTypes[errorCode] = (errorTypes[errorCode] || 0) + 1;
+
 				errorCount++;
 			}
 		}
@@ -203,6 +212,7 @@ async function showFixSuggestions(operationId: string) {
 	}
 
 	const pickitems = [];
+
 	pickitems.push({
 		label: "Clean workspace cache",
 		detail: "Clean the stale workspace and reload the window",
@@ -214,10 +224,12 @@ async function showFixSuggestions(operationId: string) {
 			detail: "Force the language server to update the project configuration/classpath",
 		});
 	}
+
 	pickitems.push({
 		label: "Open log file",
 		detail: "Open log file to view more details for the build errors",
 	});
+
 	pickitems.push({
 		label: "Troubleshooting guide",
 		detail: "Find more detail about the troubleshooting steps",
@@ -227,6 +239,7 @@ async function showFixSuggestions(operationId: string) {
 		placeHolder:
 			"Please fix the errors in PROBLEMS first, then try the fix suggestions below.",
 	});
+
 	sendInfo(operationId, {
 		operationName: "build",
 		choiceForBuildFix: ans ? ans.label : "esc",

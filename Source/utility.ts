@@ -24,6 +24,7 @@ export class UserError extends Error {
 
 	constructor(context: ITroubleshootingMessage) {
 		super(context.message);
+
 		this.context = context;
 
 		setUserError(this);
@@ -46,8 +47,11 @@ export class OperationCancelledError extends Error {
 
 interface ILoggingMessage {
 	type?: Type;
+
 	message: string;
+
 	stack?: string;
+
 	bypassLog?: boolean;
 }
 
@@ -70,6 +74,7 @@ function logMessage(message: ILoggingMessage): void {
 		if (message.type === Type.USAGEERROR) {
 			setUserError(error);
 		}
+
 		sendError(error);
 	} else {
 		sendInfo("", { message: message.message });
@@ -151,6 +156,7 @@ export function openTroubleshootingPage(message: string, anchor?: string) {
 			anchor ? `${TROUBLESHOOTING_LINK}#${anchor}` : TROUBLESHOOTING_LINK,
 		),
 	);
+
 	sendInfo("", {
 		troubleshooting: "yes",
 		troubleshootingMessage: message,
@@ -175,6 +181,7 @@ async function installJavaExtension() {
 		{ location: vscode.ProgressLocation.Notification },
 		async (p) => {
 			p.report({ message: "Installing Language Support for Java ..." });
+
 			await vscode.commands.executeCommand(
 				"workbench.extensions.installExtension",
 				JAVA_EXTENSION_ID,
@@ -217,6 +224,7 @@ function formatErrorProperties(ex: any): any {
 
 	if (exception && typeof exception === "object") {
 		properties.message = exception.detailMessage;
+
 		properties.stackTrace =
 			(Array.isArray(exception.stackTrace) &&
 				JSON.stringify(exception.stackTrace)) ||
@@ -349,6 +357,7 @@ export async function waitForStandardMode(
 					.onCancellationRequested(() => {
 						resolve(false);
 					});
+
 				api.onDidServerModeChange((mode: string) => {
 					if (mode === ServerMode.STANDARD) {
 						resolve(true);
@@ -373,6 +382,7 @@ export async function waitForStandardMode(
 				.onCancellationRequested(() => {
 					resolve(false);
 				});
+
 			api.onDidServerModeChange((mode: string) => {
 				if (mode === ServerMode.STANDARD) {
 					resolve(true);
@@ -444,6 +454,7 @@ function getJavaServerMode(): ServerMode {
 
 export function launchJobName(configName: string, noDebug: boolean): string {
 	let jobName = noDebug ? "Run" : "Debug";
+
 	jobName += configName ? ` '${configName} '` : "";
 
 	return jobName;

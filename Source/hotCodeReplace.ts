@@ -29,6 +29,7 @@ export function initializeHotCodeReplace(context: vscode.ExtensionContext) {
 		"javaHotReload",
 		getHotReloadFlag(),
 	);
+
 	vscode.workspace.onDidChangeConfiguration((event) => {
 		if (event.affectsConfiguration("java.debug.settings.hotCodeReplace")) {
 			vscode.commands.executeCommand(
@@ -38,6 +39,7 @@ export function initializeHotCodeReplace(context: vscode.ExtensionContext) {
 			);
 		}
 	});
+
 	vscode.debug.onDidStartDebugSession((session) => {
 		if (
 			session?.configuration.noDebug &&
@@ -50,6 +52,7 @@ export function initializeHotCodeReplace(context: vscode.ExtensionContext) {
 			);
 		}
 	});
+
 	vscode.debug.onDidChangeActiveDebugSession((session) => {
 		vscode.commands.executeCommand(
 			"setContext",
@@ -57,6 +60,7 @@ export function initializeHotCodeReplace(context: vscode.ExtensionContext) {
 			session && !session.configuration.noDebug,
 		);
 	});
+
 	context.subscriptions.push(
 		vscode.debug.onDidTerminateDebugSession((session) => {
 			const t = session ? session.type : undefined;
@@ -110,6 +114,7 @@ export function handleHotCodeReplaceCustomEvent(
 				});
 		}
 	}
+
 	return undefined;
 }
 

@@ -45,6 +45,7 @@ export class JavaDebugAdapterDescriptorFactory
 					type: Type.EXCEPTION,
 					message: "Failed to start debug server.",
 				};
+
 		showErrorMessageWithTroubleshooting(message);
 
 		return undefined;

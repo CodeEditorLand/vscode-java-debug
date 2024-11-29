@@ -107,6 +107,7 @@ export async function getJavaVersion(javaExec: string): Promise<number> {
 	if (!javaVersion) {
 		javaVersion = await checkVersionByCLI(javaExec);
 	}
+
 	return javaVersion;
 }
 
@@ -114,6 +115,7 @@ async function checkVersionInReleaseFile(javaHome: string): Promise<number> {
 	if (!javaHome) {
 		return 0;
 	}
+
 	const releaseFile = path.join(javaHome, "release");
 
 	if (!(await fs.existsSync(releaseFile))) {
@@ -130,6 +132,7 @@ async function checkVersionInReleaseFile(javaHome: string): Promise<number> {
 		if (!match) {
 			return 0;
 		}
+
 		const majorVersion = flattenMajorVersion(match[1]);
 
 		return majorVersion;
@@ -147,6 +150,7 @@ async function checkVersionByCLI(javaExec: string): Promise<number> {
 	if (!javaExec) {
 		return 0;
 	}
+
 	return new Promise((resolve) => {
 		cp.execFile(javaExec, ["-version"], {}, (_error, _stdout, stderr) => {
 			const regexp = /version "(.*)"/g;
@@ -156,7 +160,9 @@ async function checkVersionByCLI(javaExec: string): Promise<number> {
 			if (!match) {
 				return resolve(0);
 			}
+
 			const javaVersion = flattenMajorVersion(match[1]);
+
 			resolve(javaVersion);
 		});
 	});

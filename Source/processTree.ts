@@ -49,6 +49,7 @@ export async function getProcessTree(
 			if (!parent.children) {
 				parent.children = [];
 			}
+
 			parent.children.push(p);
 		}
 	}
@@ -56,6 +57,7 @@ export async function getProcessTree(
 	if (!isNaN(rootPid) && rootPid > 0) {
 		return map.get(rootPid);
 	}
+
 	return map.get(0);
 }
 
@@ -75,6 +77,7 @@ export function getProcesses(
 			const lines = data.toString().split(/\r?\n/);
 
 			const finishedLines = lines.slice(0, lines.length - 1);
+
 			finishedLines[0] = unfinished + finishedLines[0]; // complete previous unfinished line
 			unfinished = lines[lines.length - 1]; // remember unfinished last line of this chunk for next round
 			for (const s of finishedLines) {
@@ -97,12 +100,15 @@ export function getProcesses(
 				"wbem",
 				"WMIC.exe",
 			);
+
 			proc = spawn(wmic, [
 				"process",
 				"get",
 				"CommandLine,CreationDate,ParentProcessId,ProcessId",
 			]);
+
 			proc.stdout.setEncoding("utf8");
+
 			proc.stdout.on(
 				"data",
 				lines((line) => {
@@ -125,6 +131,7 @@ export function getProcesses(
 
 								if (end > 0) {
 									command = args.substr(1, end - 1);
+
 									args = args.substr(end + 2);
 								}
 							} else {
@@ -132,11 +139,13 @@ export function getProcesses(
 
 								if (end > 0) {
 									command = args.substr(0, end);
+
 									args = args.substr(end + 1);
 								} else {
 									args = "";
 								}
 							}
+
 							one(pid, ppid, command, args, date);
 						}
 					}
@@ -150,7 +159,9 @@ export function getProcesses(
 				"-o",
 				`pid,ppid,comm=${"a".repeat(256)},command`,
 			]);
+
 			proc.stdout.setEncoding("utf8");
+
 			proc.stdout.on(
 				"data",
 				lines((line) => {
@@ -176,6 +187,7 @@ export function getProcesses(
 				"pid:6,ppid:6,comm:20,command",
 			]); // we specify the column width explicitly
 			proc.stdout.setEncoding("utf8");
+
 			proc.stdout.on(
 				"data",
 				lines((line) => {
@@ -207,7 +219,9 @@ export function getProcesses(
 							commandEndPositionMaybe < 0
 								? fullCommand.length
 								: commandEndPositionMaybe;
+
 						command = fullCommand.substring(0, commandEndPosition);
+
 						args = fullCommand
 							.substring(commandEndPosition)
 							.trimStart();
@@ -225,6 +239,7 @@ export function getProcesses(
 		});
 
 		proc.stderr.setEncoding("utf8");
+
 		proc.stderr.on("data", (data) => {
 			const e = data.toString();
 
@@ -241,6 +256,7 @@ export function getProcesses(
 			} else if (code !== null && code > 0) {
 				reject(new Error(`process terminated with exit code: ${code}`));
 			}
+
 			if (signal) {
 				reject(new Error(`process terminated with signal: ${signal}`));
 			}
@@ -256,6 +272,7 @@ export function getProcesses(
 					);
 				}
 			}
+
 			if (signal) {
 				reject(new Error(`process terminated with signal: ${signal}`));
 			}

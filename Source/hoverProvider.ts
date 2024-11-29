@@ -32,6 +32,7 @@ export function initializeHoverProvider(): Disposable {
 
 class DebugHoverProvider implements Disposable {
 	private runHoverCommand: Disposable;
+
 	private hoverProvider: Disposable | undefined;
 
 	constructor() {
@@ -58,6 +59,7 @@ class DebugHoverProvider implements Disposable {
 				}
 			},
 		);
+
 		this.hoverProvider = languages.registerHoverProvider(
 			JAVA_LANGID,
 			new InternalDebugHoverProvider(),
@@ -121,6 +123,7 @@ class InternalDebugHoverProvider implements HoverProvider {
 					.map((command) => this.convertCommandToMarkdown(command))
 					.join(" | "),
 			);
+
 			contributed.isTrusted = true;
 
 			return new Hover(contributed);

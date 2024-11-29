@@ -12,9 +12,13 @@ const DEBUG_MODE_PATTERN = /(-agentlib|-Xrunjdwp):\S*(address=[^\s,]+)/i;
 
 interface IJavaProcess {
 	pid: number;
+
 	command: string;
+
 	args: string;
+
 	hostName: string;
+
 	debugPort: number;
 }
 

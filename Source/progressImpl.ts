@@ -19,18 +19,27 @@ import { IProgressProvider, IProgressReporter } from "./progressAPI";
 const STATUS_COMMAND: string = "java.show.server.task.status";
 class ProgressReporter implements IProgressReporter {
 	private _id: string = v4();
+
 	private _jobName: string;
+
 	private _progressLocation: ProgressLocation | { viewId: string };
+
 	private _cancellable: boolean = false;
 
 	private _message: string;
+
 	private _increment: number | undefined;
+
 	private _isShown: boolean;
 
 	private _tokenSource = new CancellationTokenSource();
+
 	private _statusBarItem: StatusBarItem | undefined;
+
 	private _cancelProgressEventEmitter: EventEmitter<void>;
+
 	private _progressEventEmitter: EventEmitter<void>;
+
 	private _disposables: Disposable[] = [];
 
 	constructor(
@@ -39,8 +48,10 @@ class ProgressReporter implements IProgressReporter {
 		cancellable: boolean,
 	) {
 		this._jobName = jobName;
+
 		this._progressLocation =
 			progressLocation || ProgressLocation.Notification;
+
 		this._cancellable = cancellable;
 
 		const config = workspace.getConfiguration("java");
@@ -58,21 +69,30 @@ class ProgressReporter implements IProgressReporter {
 				StatusBarAlignment.Left,
 				1,
 			);
+
 			this._statusBarItem.name = "Progress Message for " + this._jobName;
+
 			this._statusBarItem.text = `$(sync~spin) ${this._jobName}...`;
+
 			this._statusBarItem.command = {
 				title: "Check Java Build Status",
 				command: STATUS_COMMAND,
 				arguments: [],
 			};
+
 			this._statusBarItem.tooltip = "Check Java Build Status";
+
 			this._disposables.push(this._statusBarItem);
 		}
 
 		this._cancelProgressEventEmitter = new EventEmitter<any>();
+
 		this._progressEventEmitter = new EventEmitter<any>();
+
 		this._disposables.push(this._cancelProgressEventEmitter);
+
 		this._disposables.push(this._progressEventEmitter);
+
 		this._disposables.push(this._tokenSource);
 	}
 
@@ -93,12 +113,16 @@ class ProgressReporter implements IProgressReporter {
 			const text = message
 				? `${this._jobName} - ${message}`
 				: `${this._jobName}...`;
+
 			this._statusBarItem.text = `$(sync~spin) ${text}`;
 		}
 
 		this._message = message;
+
 		this._increment = increment;
+
 		this._progressEventEmitter.fire();
+
 		this.show();
 	}
 
@@ -118,6 +142,7 @@ class ProgressReporter implements IProgressReporter {
 			this._progressLocation === ProgressLocation.Notification
 		) {
 			this._cancelProgressEventEmitter.fire();
+
 			this._isShown = false;
 		}
 	}
@@ -128,8 +153,11 @@ class ProgressReporter implements IProgressReporter {
 
 	public done(): void {
 		this._tokenSource.cancel();
+
 		this._cancelProgressEventEmitter.fire();
+
 		this._statusBarItem?.hide();
+
 		this._disposables.forEach((disposable) => disposable.dispose());
 		(<ProgressProvider>progressProvider).remove(this);
 	}
@@ -150,6 +178,7 @@ class ProgressReporter implements IProgressReporter {
 		}
 
 		this._isShown = true;
+
 		window.withProgress<boolean>(
 			{
 				location: this._progressLocation,
@@ -163,7 +192,9 @@ class ProgressReporter implements IProgressReporter {
 					message: this._message,
 					increment: this._increment,
 				});
+
 				this.observe(token);
+
 				this._progressEventEmitter.event(() => {
 					progress.report({
 						message: this._message,
@@ -194,6 +225,7 @@ class ProgressProvider implements IProgressProvider {
 			progressLocation || ProgressLocation.Notification,
 			cancellable === undefined ? true : !!cancellable,
 		);
+
 		this.store[progressReporter.getId()] = progressReporter;
 
 		return progressReporter;

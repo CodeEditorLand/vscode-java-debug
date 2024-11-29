@@ -25,6 +25,7 @@ export function logJavaException(errorProperties: any): void {
 	 */
 	const { debugSessionId, description, message, stackTrace } =
 		errorProperties;
+
 	sendOperationError(debugSessionId, "debugSession", {
 		name: "JavaException",
 		message: description || message,

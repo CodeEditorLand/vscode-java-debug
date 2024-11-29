@@ -15,7 +15,9 @@ export enum CompileWorkspaceStatus {
 
 export interface IMainClassOption {
 	readonly mainClass: string;
+
 	readonly projectName?: string;
+
 	readonly filePath?: string;
 }
 
@@ -33,13 +35,17 @@ export const CONFIGERROR_INVALID_JAVA_PROJECT = 4;
 
 export interface IValidationResult {
 	readonly isValid: boolean;
+
 	readonly message?: string;
+
 	readonly kind?: number;
 }
 
 export interface ILaunchValidationResponse {
 	readonly mainClass: IValidationResult;
+
 	readonly projectName: IValidationResult;
+
 	readonly proposals?: IMainClassOption[];
 }
 
@@ -95,6 +101,7 @@ export function resolveMainClass(
 			)
 		);
 	}
+
 	return <Promise<IMainClassOption[]>>(
 		commands.executeJavaLanguageServerCommand(
 			commands.JAVA_RESOLVE_MAINCLASS,
@@ -256,7 +263,9 @@ export async function resolveInlineVariables(
 // tslint:disable-next-line:interface-name
 export interface InlineParams {
 	uri: string;
+
 	viewPort?: Range;
+
 	stoppedLocation: Range;
 }
 
@@ -269,8 +278,12 @@ export enum InlineKind {
 // tslint:disable-next-line:interface-name
 export interface InlineVariable {
 	range: Range;
+
 	name: string;
+
 	kind: InlineKind;
+
 	expression: string;
+
 	declaringClass: string;
 }

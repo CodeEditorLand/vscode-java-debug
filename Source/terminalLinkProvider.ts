@@ -75,6 +75,7 @@ export class JavaTerminalLinkProvder
 
 		if (uri) {
 			const lineNumber = Math.max(link.lineNumber - 1, 0);
+
 			window.showTextDocument(Uri.parse(uri), {
 				preserveFocus: true,
 				selection: new Range(
@@ -92,6 +93,7 @@ export class JavaTerminalLinkProvder
 			const className = fullyQualifiedName.substring(
 				fullyQualifiedName.lastIndexOf(".") + 1,
 			);
+
 			commands.executeCommand(
 				"workbench.action.quickOpen",
 				"#" + className,
@@ -102,7 +104,10 @@ export class JavaTerminalLinkProvder
 
 interface IJavaTerminalLink extends TerminalLink {
 	methodName: string;
+
 	stackTrace: string;
+
 	lineNumber: number;
+
 	isDebuggerTerminal: boolean;
 }

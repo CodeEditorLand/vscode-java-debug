@@ -57,6 +57,7 @@ import { registerVariableMenuCommands } from "./variableMenu";
 
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	await initializeFromJsonFile(context.asAbsolutePath("./package.json"));
+
 	await initExpService(context);
 
 	return instrumentOperation("activation", initializeExtension)(context);
@@ -67,24 +68,29 @@ function initializeExtension(
 	context: vscode.ExtensionContext,
 ): any {
 	registerDebugEventListener(context);
+
 	registerVariableMenuCommands(context);
+
 	context.subscriptions.push(
 		vscode.window.registerTerminalLinkProvider(
 			new JavaTerminalLinkProvder(),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.debug.registerDebugConfigurationProvider(
 			"java",
 			new JavaDebugConfigurationProvider(),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.debug.registerDebugAdapterDescriptorFactory(
 			"java",
 			new JavaDebugAdapterDescriptorFactory(),
 		),
 	);
+
 	context.subscriptions.push(
 		instrumentOperationAsVsCodeCommand(
 			"JavaDebug.SpecifyProgramArgs",
@@ -93,6 +99,7 @@ function initializeExtension(
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		instrumentOperationAsVsCodeCommand(
 			"JavaDebug.PickJavaProcess",
@@ -119,7 +126,9 @@ function initializeExtension(
 		"java.hcrStatusBar",
 		"Java HotCodeReplace",
 	);
+
 	context.subscriptions.push(hcrStatusBar);
+
 	context.subscriptions.push(
 		instrumentOperationAsVsCodeCommand(
 			"java.debug.hotCodeReplace",
@@ -128,6 +137,7 @@ function initializeExtension(
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		instrumentOperationAsVsCodeCommand(
 			"java.debug.runJavaFile",
@@ -136,6 +146,7 @@ function initializeExtension(
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		instrumentOperationAsVsCodeCommand(
 			"java.debug.debugJavaFile",
@@ -144,6 +155,7 @@ function initializeExtension(
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		instrumentOperationAsVsCodeCommand(
 			"java.debug.runFromProjectView",
@@ -152,6 +164,7 @@ function initializeExtension(
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		instrumentOperationAsVsCodeCommand(
 			"java.debug.debugFromProjectView",
@@ -160,9 +173,13 @@ function initializeExtension(
 			},
 		),
 	);
+
 	initializeHotCodeReplace(context);
+
 	initializeCodeLensProvider(context);
+
 	initializeThreadOperations(context);
+
 	subscribeToJavaExtensionEvents();
 
 	context.subscriptions.push(
@@ -196,6 +213,7 @@ async function subscribeToJavaExtensionEvents(): Promise<void> {
 
 	while (!javaExt.isActive && count < timeout) {
 		await delay(1000);
+
 		count += 1000;
 	}
 
@@ -216,11 +234,13 @@ async function subscribeToJavaExtensionEvents(): Promise<void> {
 
 function registerDebugEventListener(context: vscode.ExtensionContext) {
 	const measureKeys = ["duration"];
+
 	context.subscriptions.push(
 		vscode.debug.onDidTerminateDebugSession((e) => {
 			if (e.type !== "java") {
 				return;
 			}
+
 			fetchUsageData().then((ret) => {
 				if (Array.isArray(ret) && ret.length) {
 					ret.forEach((entry) => {
@@ -235,6 +255,7 @@ function registerDebugEventListener(context: vscode.ExtensionContext) {
 								commonProperties[key] = String(entry[key]);
 							}
 						}
+
 						if (entry.scope === "exception") {
 							logJavaException(commonProperties);
 						} else {
@@ -255,6 +276,7 @@ function registerDebugEventListener(context: vscode.ExtensionContext) {
 			if (t !== JAVA_LANGID) {
 				return;
 			}
+
 			if (customEvent.event === TELEMETRY_EVENT) {
 				sendInfo("", {
 					operationName: customEvent.body?.name,
@@ -349,6 +371,7 @@ async function applyHCR(hcrStatusBar: NotificationBar) {
 		// If autobuild is disabled, force an incremental build before HCR.
 		try {
 			hcrStatusBar.show("$(sync~spin)Compiling...");
+
 			await commands.executeJavaExtensionCommand(
 				commands.JAVA_BUILD_WORKSPACE,
 				JSON.stringify({
@@ -389,6 +412,7 @@ async function applyHCR(hcrStatusBar: NotificationBar) {
 		!response.changedClasses.length
 	) {
 		hcrStatusBar.clear();
+
 		vscode.window.showWarningMessage(
 			"Cannot find any changed classes for hot replace!",
 		);
@@ -397,6 +421,7 @@ async function applyHCR(hcrStatusBar: NotificationBar) {
 	}
 
 	const changed = response.changedClasses.length;
+
 	hcrStatusBar.show(
 		"$(check)" +
 			`${changed} changed class${changed > 1 ? "es are" : " is"} reloaded`,
@@ -451,9 +476,13 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 				progressReporter.setJobName(
 					utility.launchJobName(lastUsedLaunchConfig.name, noDebug),
 				);
+
 				progressReporter.report("Resolving launch configuration...");
+
 				lastUsedLaunchConfig.noDebug = noDebug;
+
 				lastUsedLaunchConfig.__progressId = progressReporter.getId();
+
 				vscode.debug.startDebugging(
 					lastUsedLaunchConfig.__workspaceFolder,
 					lastUsedLaunchConfig,
@@ -469,6 +498,7 @@ async function runJavaFile(uri: vscode.Uri, noDebug: boolean) {
 				}
 
 				const placeHolder: string = `The file '${path.basename(uri.fsPath)}' is not executable, please select a main class you want to run.`;
+
 				await launchMain(
 					mainClasses,
 					uri,
@@ -540,6 +570,7 @@ async function canDelegateToJavaTestRunner(uri: vscode.Uri): Promise<boolean> {
 	if (!isTestFile) {
 		return false;
 	}
+
 	return (await vscode.commands.getCommands()).includes(
 		"java.test.editor.run",
 	);
@@ -553,6 +584,7 @@ function launchTesting(
 	const command: string = noDebug
 		? "java.test.editor.run"
 		: "java.test.editor.debug";
+
 	vscode.commands.executeCommand(command, uri, progressReporter);
 
 	if (compareVersions.compare(getTestExtensionVersion(), "0.26.1", "<=")) {
@@ -609,7 +641,9 @@ async function launchMain(
 			utility.launchJobNameByMainClass(pick.mainClass, noDebug),
 		);
 	}
+
 	progressReporter.report("Launching main class...");
+
 	startDebugging(
 		pick.mainClass,
 		pick.projectName || "",
@@ -661,6 +695,7 @@ async function runJavaProject(node: any, noDebug: boolean) {
 		if (!mainClassPicker.isAutoPicked(mainClassesOptions)) {
 			progressReporter.hide(true);
 		}
+
 		const pick = await mainClassPicker.showQuickPickWithRecentlyUsed(
 			mainClassesOptions,
 			"Select the main class to run.",
@@ -690,13 +725,19 @@ async function runJavaProject(node: any, noDebug: boolean) {
 			mainClass,
 			projectName,
 		};
+
 		debugConfig.noDebug = noDebug;
+
 		debugConfig.__progressId = progressReporter.getId();
+
 		debugConfig.__origin = "internal";
+
 		progressReporter.setJobName(
 			utility.launchJobName(debugConfig.name, noDebug),
 		);
+
 		progressReporter.report("Launching main class...");
+
 		vscode.debug.startDebugging(workspaceFolder, debugConfig);
 	} catch (ex) {
 		progressReporter.done();

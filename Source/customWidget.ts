@@ -5,6 +5,7 @@ import * as vscode from "vscode";
 
 export class NotificationBar implements vscode.Disposable {
 	private statusBar: vscode.StatusBarItem;
+
 	private lastUpdateTime: number;
 
 	constructor(id: string, name: string) {
@@ -13,20 +14,24 @@ export class NotificationBar implements vscode.Disposable {
 			vscode.StatusBarAlignment.Left,
 			1,
 		);
+
 		this.statusBar.name = name;
 	}
 
 	public show(text: string, duration?: number) {
 		this.statusBar.text = text;
+
 		this.statusBar.show();
 
 		const updateTime = Date.now();
+
 		this.lastUpdateTime = updateTime;
 
 		if (duration) {
 			setTimeout(() => {
 				if (this.lastUpdateTime === updateTime) {
 					this.statusBar.text = "";
+
 					this.statusBar.hide();
 				}
 			}, duration);
@@ -35,6 +40,7 @@ export class NotificationBar implements vscode.Disposable {
 
 	public clear() {
 		this.statusBar.text = "";
+
 		this.statusBar.hide();
 	}
 

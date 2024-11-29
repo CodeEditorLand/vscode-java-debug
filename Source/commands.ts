@@ -66,8 +66,10 @@ export async function executeJavaExtensionCommand(
 			`Cannot execute command ${commandName}, VS Code Java Extension is not enabled.`,
 		);
 	}
+
 	if (!javaExtension.isActive) {
 		await javaExtension.activate();
 	}
+
 	return vscode.commands.executeCommand(commandName, ...rest);
 }

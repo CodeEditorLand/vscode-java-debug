@@ -17,7 +17,9 @@ export async function populateStepFilters(config: vscode.DebugConfiguration) {
 	if (Array.isArray(config.stepFilters.classNameFilters)) {
 		mergeResult(config.stepFilters.classNameFilters, skipClasses);
 	}
+
 	config.stepFilters.classNameFilters = undefined;
+
 	config.stepFilters.skipClasses = skipClasses;
 }
 
