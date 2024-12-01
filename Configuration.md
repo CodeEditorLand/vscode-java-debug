@@ -31,7 +31,7 @@
 
 The debugger provides two kinds of configuration: _launch.json_ and
 _settings.json_ (User Settings), see the
-[`README`](HTTPS://github.com/Microsoft/vscode-java-debug#options) for the
+[`README`](https://github.com/Microsoft/vscode-java-debug#options) for the
 supported configuration list. launch.json is used to control the configuration
 per debug session, and the user setting is shared by the whole workspace or VS
 Code.
@@ -40,18 +40,18 @@ Code.
 
 When you run the program via `Run|Debug` CodeLens or `Run`/`Debug` context menu,
 the debugger automatically generates the launching configuration for you.
-![`runMenu`](HTTPS://user-images.githubusercontent.com/14052197/67181889-715bb380-f410-11e9-9aef-c27ce697daa0.gif)
+![`runMenu`](https://user-images.githubusercontent.com/14052197/67181889-715bb380-f410-11e9-9aef-c27ce697daa0.gif)
 
 ## Modify the launch.json
 
 If you don't see `.vscode/launch.json` in your VS Code window, you can go to
 "Run and Debug" viewlet to create an initial launch.json.
-![`create launch.json`](HTTPS://user-images.githubusercontent.com/14052197/172300183-7758eb9b-5e61-485b-b238-a63a98a9fb11.png)
+![`create launch.json`](https://user-images.githubusercontent.com/14052197/172300183-7758eb9b-5e61-485b-b238-a63a98a9fb11.png)
 
 On the other hand, the debugger provides multiple configuration templates to
 help you to easily add a new configuration. When you type `"java"` or `""` in
 launch.json, it will trigger auto-completion suggestions.
-![`launchConfig`](HTTPS://user-images.githubusercontent.com/14052197/67182212-3908a500-f411-11e9-9467-48ba2f6e0e39.gif)
+![`launchConfig`](https://user-images.githubusercontent.com/14052197/67182212-3908a500-f411-11e9-9467-48ba2f6e0e39.gif)
 
 In case you want to manually edit the configuration, below are the explanation
 and samples about the common debug configurations.
@@ -66,18 +66,18 @@ and samples about the common debug configurations.
          If you have no idea about what to set here, just leave it empty. The
         debugger will search all possible main classes from the workspace, then
         prompt you the list to choose for launch.  
-        ![`emptyMainClass`](HTTPS://user-images.githubusercontent.com/14052197/67261011-25bd0e80-f4d1-11e9-966d-3e82a4e261ce.gif)
+        ![`emptyMainClass`](https://user-images.githubusercontent.com/14052197/67261011-25bd0e80-f4d1-11e9-966d-3e82a4e261ce.gif)
 
     -   `"mainClass": "${file}"`  
          If you have multiple main Java files, use this to auto switch to your
         current focus program. The debugger will resolve the main class from
         current active Java file, and set it as the launching main class.
-        ![`currentFile`](HTTPS://user-images.githubusercontent.com/14052197/67183367-d7960580-f413-11e9-9773-7df735710054.gif)
+        ![`currentFile`](https://user-images.githubusercontent.com/14052197/67183367-d7960580-f413-11e9-9773-7df735710054.gif)
 
     -   `"mainClass": "com.microsoft.app.myApp"`  
          The fully qualified class name, generally it's filled by the debugger's
         auto generation.  
-        ![`mainClass`](HTTPS://user-images.githubusercontent.com/14052197/67190742-17181e00-f423-11e9-98ab-1c568f220ba7.gif)
+        ![`mainClass`](https://user-images.githubusercontent.com/14052197/67190742-17181e00-f423-11e9-98ab-1c568f220ba7.gif)
 
 -   `projectName` - The preferred project in which the debugger searches for
     classes. It's required for the evaluation feature. Most of the time, the
@@ -91,10 +91,10 @@ and samples about the common debug configurations.
         the debugger auto generates the project name for you.
 
     > Pro Tip: The easiest way to get the project name is to install
-    > [`Java Dependency Viewer`](HTTPS://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-dependency)
+    > [`Java Dependency Viewer`](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-dependency)
     > extension, the top node in the JAVA DEPENDENCIES view is your project
     > name.  
-    > ![`java-dependency-viewer`](HTTPS://user-images.githubusercontent.com/14052197/67185034-7cfea880-f417-11e9-8a3b-a3af1a9e86bb.png)
+    > ![`java-dependency-viewer`](https://user-images.githubusercontent.com/14052197/67185034-7cfea880-f417-11e9-8a3b-a3af1a9e86bb.png)
 
 ### Arguments
 
@@ -105,7 +105,7 @@ and samples about the common debug configurations.
 
     -   `"args": "arg0 arg1"`  
         Space separated String value.
-        ![`programArgs`](HTTPS://user-images.githubusercontent.com/14052197/67191536-5abf5780-f424-11e9-9664-6cc5805225bb.gif)
+        ![`programArgs`](https://user-images.githubusercontent.com/14052197/67191536-5abf5780-f424-11e9-9664-6cc5805225bb.gif)
 
     -   `"args": ["arg0", "arg1"]`  
         An array of String.
@@ -113,7 +113,7 @@ and samples about the common debug configurations.
         The debugger will prompt you with an input box to type the args value
         before launching the program. This is convenient when you have a program
         running against multiple data set.  
-        ![`specifyArgs`](HTTPS://user-images.githubusercontent.com/14052197/67191890-0ff20f80-f425-11e9-8df2-5fd98e61c204.gif)
+        ![`specifyArgs`](https://user-images.githubusercontent.com/14052197/67191890-0ff20f80-f425-11e9-8df2-5fd98e61c204.gif)
 
 -   `vmArgs` - VM arguments are used to configure JVM options and platform
     properties. Most of these arguments have a prefix (-D, -X, -XX). For
@@ -139,19 +139,19 @@ and samples about the common debug configurations.
     -   `"console": "internalConsole"`  
         VS Code debug console (input stream not supported). If you're developing
         backend application, `internalConsole` is recommended.
-        ![`internalConsole`](HTTPS://user-images.githubusercontent.com/14052197/67193516-fef6cd80-f427-11e9-8a97-9014470c3a4d.gif)
+        ![`internalConsole`](https://user-images.githubusercontent.com/14052197/67193516-fef6cd80-f427-11e9-8a97-9014470c3a4d.gif)
 
     -   `"console": "integratedTerminal"`  
         VS Code integrated terminal. If you're developing console application
         with io input requirements, you must use the terminal to accept user
         input. For example, use _Scanner_ class for user input.  
-        ![`integratedTerminal`](HTTPS://user-images.githubusercontent.com/14052197/67195762-251e6c80-f42c-11e9-89d0-9545560beea9.gif)
+        ![`integratedTerminal`](https://user-images.githubusercontent.com/14052197/67195762-251e6c80-f42c-11e9-89d0-9545560beea9.gif)
 
     -   `"console": "externalTerminal"`  
         External terminal that can be configured in user settings. The user
         scenario is same as integrated terminal. The difference is opening an
         external terminal window to run your program.  
-        ![`externalTerminal`](HTTPS://user-images.githubusercontent.com/14052197/67196194-eccb5e00-f42c-11e9-9d4c-6baa5eec18bc.gif)
+        ![`externalTerminal`](https://user-images.githubusercontent.com/14052197/67196194-eccb5e00-f42c-11e9-9d4c-6baa5eec18bc.gif)
 
 -   `env` - The extra environment variables for the program. It's accessible via
     `System.getenv(key)`. It accepts key-value pairs.
@@ -213,7 +213,7 @@ and samples about the common debug configurations.
         }
         ```
 
-        ![`skipClassLoader`](HTTPS://user-images.githubusercontent.com/14052197/67254877-ff3bab00-f4b1-11e9-8da0-22b49935bd57.gif)
+        ![`skipClassLoader`](https://user-images.githubusercontent.com/14052197/67254877-ff3bab00-f4b1-11e9-8da0-22b49935bd57.gif)
 
     -   Skip the JDK classes.
 
@@ -233,7 +233,7 @@ and samples about the common debug configurations.
         }
         ```
 
-        ![`skipJDK`](HTTPS://user-images.githubusercontent.com/14052197/67255028-9dc80c00-f4b2-11e9-9113-bef0c0bdf5cb.gif)
+        ![`skipJDK`](https://user-images.githubusercontent.com/14052197/67255028-9dc80c00-f4b2-11e9-9113-bef0c0bdf5cb.gif)
 
     -   Skip the constructors and the synthetic methods.
         ```json
@@ -253,7 +253,7 @@ and samples about the common debug configurations.
         	]
         }
         ```
-        ![`skipMethods`](HTTPS://user-images.githubusercontent.com/14052197/67255209-83daf900-f4b3-11e9-8533-70f6ff941e8d.gif)
+        ![`skipMethods`](https://user-images.githubusercontent.com/14052197/67255209-83daf900-f4b3-11e9-8533-70f6ff941e8d.gif)
 
 ### Attach to a debuggee
 
@@ -277,7 +277,7 @@ and then the debug port of your debuggee is _5005_.
 
 In some cases, you may want to start your program with the external builder and
 launcher, then you can configure these jobs in
-[`tasks.json`](HTTPS://code.visualstudio.com/docs/editor/tasks) and attach to it.
+[`tasks.json`](https://code.visualstudio.com/docs/editor/tasks) and attach to it.
 For example, launching springboot application via mvn command, and then attach a
 debugger.
 
@@ -322,7 +322,7 @@ debugger.
     }
     ```
 3. <b>F5</b> will launch the mvn task, and attach the debugger. See the demo.  
-   ![`attachToMvn`](HTTPS://user-images.githubusercontent.com/14052197/67262705-4f2d6880-f4d8-11e9-9e2d-9c35a6613c08.gif)
+   ![`attachToMvn`](https://user-images.githubusercontent.com/14052197/67262705-4f2d6880-f4d8-11e9-9e2d-9c35a6613c08.gif)
 
 #### Attach to embedded maven tomcat server
 
@@ -411,15 +411,15 @@ debugger.
 
 3. <b>F5</b> will auto start the tomcat server and attach the debugger. The demo
    below will show how to debug spring mvc in tomcat.  
-   ![`attachToEmbeddedTomcat`](HTTPS://user-images.githubusercontent.com/14052197/67541153-80957680-f71a-11e9-9d59-e9aaa752fe33.gif)
+   ![`attachToEmbeddedTomcat`](https://user-images.githubusercontent.com/14052197/67541153-80957680-f71a-11e9-9d59-e9aaa752fe33.gif)
 
 > If you want to try to debug your Java webapps in a standalone tomcat server,
 > please try VS Code
-> [`Tomcat for Java`](HTTPS://marketplace.visualstudio.com/items?itemName=adashen.vscode-tomcat)
+> [`Tomcat for Java`](https://marketplace.visualstudio.com/items?itemName=adashen.vscode-tomcat)
 > extension.
 
 > If you want to try to debug embedded tomcat server with gradle plugin, see the
-> [`gradle sample`](HTTPS://github.com/microsoft/vscode-java-debug/issues/140#issuecomment-343656398).
+> [`gradle sample`](https://github.com/microsoft/vscode-java-debug/issues/140#issuecomment-343656398).
 
 #### Use javac as the builder and attach to java process
 
@@ -477,7 +477,7 @@ debugger.
     }
     ```
 3. <b>F5</b> will run the tasks and attach the debugger. See the demo.  
-   ![`attachToJava`](HTTPS://user-images.githubusercontent.com/14052197/67263956-3cb52e00-f4dc-11e9-9c78-6e66cb3d7c2b.gif)
+   ![`attachToJava`](https://user-images.githubusercontent.com/14052197/67263956-3cb52e00-f4dc-11e9-9c78-6e66cb3d7c2b.gif)
 
 ## Modify the settings.json (User Setting)
 
@@ -485,7 +485,7 @@ debugger.
     program, defaults to `integratedTerminal`. If you want to customize the
     console for a specific debug session, please use `console` option in
     launch.json instead.
-    ![`terminal`](HTTPS://user-images.githubusercontent.com/14052197/67256063-cf8fa180-f4b7-11e9-9455-77daad2f0ec9.gif)
+    ![`terminal`](https://user-images.githubusercontent.com/14052197/67256063-cf8fa180-f4b7-11e9-9455-77daad2f0ec9.gif)
 
 -   `java.debug.settings.forceBuildBeforeLaunch` - Force building the workspace
     before launching java program, defaults to `true`. Sometimes you may be
@@ -501,7 +501,7 @@ debugger.
     `never`.
 
     -   `manual` - Click the toolbar to apply the changes.  
-        ![`hcr`](HTTPS://user-images.githubusercontent.com/14052197/67256313-f5697600-f4b8-11e9-9db6-54540b6350ad.png)
+        ![`hcr`](https://user-images.githubusercontent.com/14052197/67256313-f5697600-f4b8-11e9-9db6-54540b6350ad.png)
     -   `auto` - Automatically apply the changes after saved.
     -   `never` - Never apply the changes.
 
@@ -509,9 +509,9 @@ debugger.
     for the _Run_ and _Debug_ buttons over main entry points, defaults to
     `true`.
     -   `true` - Show the code lens.  
-        ![`codelens`](HTTPS://user-images.githubusercontent.com/14052197/67256585-83922c00-f4ba-11e9-883f-2b3de3db2dfa.png)
+        ![`codelens`](https://user-images.githubusercontent.com/14052197/67256585-83922c00-f4ba-11e9-883f-2b3de3db2dfa.png)
     -   `false` - Show the Run/Debug link in the hover.  
-        ![`hover`](HTTPS://user-images.githubusercontent.com/14052197/67256539-2ac29380-f4ba-11e9-8a5b-e5e1d0a27f0e.png)
+        ![`hover`](https://user-images.githubusercontent.com/14052197/67256539-2ac29380-f4ba-11e9-8a5b-e5e1d0a27f0e.png)
 
 ## FAQ
 
