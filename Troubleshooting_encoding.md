@@ -76,7 +76,7 @@ The following diagram shows the parts of encoding that may be involved when
 writing and running Java in VS Code.
 
 <p align="center">
-  <img alt="encoding_diagram" src="HTTPS://user-images.githubusercontent.com/14052197/142844414-360765c9-8e7d-4825-a5b9-7360c624fa8d.png">
+  <img alt="encoding_diagram" src="https://user-images.githubusercontent.com/14052197/142844414-360765c9-8e7d-4825-a5b9-7360c624fa8d.png">
   <br>
     <em>Encoding on Windows</em>
 </p>
@@ -117,7 +117,7 @@ charset will be `"GBK"` and the cmd codepage will be `"936"`, which will support
 Chinese characters nicely.
 
 <p align="center">
-  <img alt="change_system_locale" src="HTTPS://user-images.githubusercontent.com/14052197/138408027-da71d3f4-7f64-4bfb-8b34-89d0605606f5.png">
+  <img alt="change_system_locale" src="https://user-images.githubusercontent.com/14052197/138408027-da71d3f4-7f64-4bfb-8b34-89d0605606f5.png">
   <br>
     <em>Change System Locale</em>
 </p>
