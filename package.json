@@ -954,7 +954,7 @@
 	},
 	"dependencies": {
 		"compare-versions": "6.1.1",
-		"dotenv": "16.4.5",
+		"dotenv": "16.4.6",
 		"lodash": "4.17.21",
 		"uuid": "11.0.3"
 	},
